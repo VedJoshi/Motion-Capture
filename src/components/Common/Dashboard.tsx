@@ -1,15 +1,16 @@
 import React from 'react';
 
-function Dashboard() {
+function Dashboard({userStats}) {
+
   return (
     <div>
       <h2>Dashboard</h2>
       <p>Your workout statistics will go here</p>
       <div>
         <h3>Quick Stats</h3>
-        <p>Total Workouts: 0</p>
-        <p>Total Reps: 0</p>
-        <p>Current Streak: 0 days</p>
+        <p>Total Workouts: {userStats.totalWorkouts}</p>
+        <p>Total Reps: {userStats.totalReps}</p>
+        <p>Current Streak: {userStats.currentStreak} days</p>
       </div>
     </div>
   );

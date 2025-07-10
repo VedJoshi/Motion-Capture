@@ -8,18 +8,38 @@ import Dashboard from './components/Common/Dashboard.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
+  const [selectedExercise, setSelectedExercise] = useState(null);
+
+  const userStats = {
+    totalWorkouts: 23,
+    totalReps: 223,
+    currentStreak: 43
+  }
+
+  const handleExerciseSelect = (exercise) => {
+    setSelectedExercise(exercise);
+    setCurrentView('workout');
+  }
+
+  const resetWorkout = () => {
+    setSelectedExercise(null);
+    setCurrentView('exercises');
+  }
 
   const renderCurrentView = () => {
     if (currentView === 'dashboard') {
-      return <Dashboard />;
+      return <Dashboard userStats={userStats}/>;
     } else if (currentView === 'exercises') {
-      return <ExerciseSelector />;
+      return <ExerciseSelector onExerciseSelect={handleExerciseSelect}/>;
     } else if (currentView === 'workout') {
-      return <WorkoutView />;
+      return <WorkoutView 
+        selectedExercise={selectedExercise}
+        onReset={resetWorkout}
+        />;
     }
     
     // Default
-    return <Dashboard />;
+    return <Dashboard userStats={userStats}/>;
   };
 
   return (
