@@ -34,3 +34,8 @@ nav button:hover {
   background: #3498db;
   color: white;
 }
+
+nav button.active {
+  background: #3498db;
+  color: white;
+}
