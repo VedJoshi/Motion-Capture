@@ -94,12 +94,37 @@ function CameraView({ onPoseResults }) {
   };
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      {isLoading && <p>Loading camera and AI model...</p>}
+    <div style={{ 
+      textAlign: 'center',
+      maxWidth: '100%',
+      width: '100%',
+      margin: '0 auto'
+    }}>
+      {isLoading && (
+        <div style={{ 
+          padding: '1.25rem', 
+          background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)', 
+          borderRadius: 'var(--border-radius-lg)', 
+          color: 'var(--primary-color)',
+          margin: '1rem 0',
+          border: '1px solid rgba(79, 70, 229, 0.2)',
+          boxShadow: 'var(--shadow-sm)'
+        }}>
+          <p style={{ margin: 0, fontWeight: '500' }}>🤖 Loading camera and AI model...</p>
+        </div>
+      )}
       
       {error && (
-        <div style={{ color: 'red', marginBottom: '10px' }}>
-          <p>{error}</p>
+        <div style={{ 
+          color: 'var(--danger-color)', 
+          marginBottom: '1.25rem',
+          padding: '1rem',
+          background: 'rgba(239, 68, 68, 0.1)',
+          borderRadius: 'var(--border-radius-lg)',
+          border: '1px solid rgba(239, 68, 68, 0.2)',
+          boxShadow: 'var(--shadow-sm)'
+        }}>
+          <p style={{ margin: 0, fontWeight: '500' }}>❌ {error}</p>
         </div>
       )}
 
@@ -114,7 +139,13 @@ function CameraView({ onPoseResults }) {
         style={{ 
           position: 'relative', 
           display: 'inline-block',
-          maxWidth: '640px'
+          width: '100%',
+          maxWidth: '800px',
+          borderRadius: 'var(--border-radius-xl)',
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-xl)',
+          border: '1px solid var(--neutral-200)',
+          background: 'var(--surface-white)'
         }}
       >
         <video
@@ -125,9 +156,8 @@ function CameraView({ onPoseResults }) {
           style={{
             width: '100%',
             height: 'auto',
-            border: '2px solid #3498db',
-            borderRadius: '8px',
-            display: error ? 'none' : 'block'
+            display: error ? 'none' : 'block',
+            maxHeight: '60vh'
           }}
         />
         
@@ -140,40 +170,114 @@ function CameraView({ onPoseResults }) {
         )}
       </div>
       
-      {/* Debug information panel */}
-      {poseResults?.poseLandmarks && (
-        <div style={{ 
-            marginTop: '10px', 
-            fontSize: '12px',
-            textAlign: 'left',
-            maxWidth: '640px',
-            background: '#f5f5f5',
-            padding: '10px',
-            borderRadius: '4px'
-        }}>
-            <strong>Debug Info:</strong>
-            <br />
-            Landmarks detected: {poseResults.poseLandmarks.length}
-            <br />
-            Video dimensions: {videoDimensions.width} x {videoDimensions.height}
-            <br />
-            Left wrist: {poseResults.poseLandmarks[15] ? 
-            `(${poseResults.poseLandmarks[15].x.toFixed(2)}, ${poseResults.poseLandmarks[15].y.toFixed(2)})` 
-            : 'Not detected'}
-            <br />
-            Right wrist: {poseResults.poseLandmarks[16] ? 
-            `(${poseResults.poseLandmarks[16].x.toFixed(2)}, ${poseResults.poseLandmarks[16].y.toFixed(2)})` 
-            : 'Not detected'}
-        </div>
-      )}
+      {/* Professional debug information panel */}
+      <div style={{ 
+          marginTop: '1.5rem', 
+          fontSize: '0.875rem',
+          textAlign: 'left',
+          width: '100%',
+          maxWidth: '800px',
+          minHeight: '140px',
+          background: 'var(--surface-white)',
+          padding: '1.5rem',
+          borderRadius: 'var(--border-radius-lg)',
+          border: '1px solid var(--neutral-200)',
+          boxSizing: 'border-box',
+          fontFamily: '"JetBrains Mono", "SF Mono", "Monaco", "Cascadia Code", "Roboto Mono", monospace',
+          boxShadow: 'var(--shadow-sm)',
+          margin: '1.5rem auto 0 auto'
+      }}>
+          <div style={{ 
+            fontSize: '1rem', 
+            fontWeight: '600', 
+            marginBottom: '1rem', 
+            color: 'var(--neutral-700)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            🔍 Detection Status
+          </div>
+          {poseResults?.poseLandmarks ? (
+            <div style={{ color: 'var(--success-color)', lineHeight: '1.6' }}>
+              <div style={{ marginBottom: '0.5rem' }}>
+                ✅ <strong>Landmarks detected:</strong> {poseResults.poseLandmarks.length}
+              </div>
+              <div style={{ marginBottom: '0.5rem' }}>
+                📐 <strong>Video dimensions:</strong> {videoDimensions.width} x {videoDimensions.height}
+              </div>
+              <div style={{ marginBottom: '0.5rem' }}>
+                👈 <strong>Left wrist:</strong> {poseResults.poseLandmarks[15] ? 
+                `(${poseResults.poseLandmarks[15].x.toFixed(2)}, ${poseResults.poseLandmarks[15].y.toFixed(2)})` 
+                : 'Not detected'}
+              </div>
+              <div>
+                👉 <strong>Right wrist:</strong> {poseResults.poseLandmarks[16] ? 
+                `(${poseResults.poseLandmarks[16].x.toFixed(2)}, ${poseResults.poseLandmarks[16].y.toFixed(2)})` 
+                : 'Not detected'}
+              </div>
+            </div>
+          ) : (
+            <div style={{ color: 'var(--neutral-500)', lineHeight: '1.6' }}>
+              <div style={{ marginBottom: '0.5rem' }}>⚠️ No pose detected</div>
+              <div style={{ marginBottom: '0.5rem' }}>📍 Move into camera view to start detection</div>
+              <div>💡 Ensure good lighting and full body visibility</div>
+            </div>
+          )}
+      </div>
       
       {isCameraActive && (
-        <div style={{ marginTop: '10px' }}>
-          <p style={{ color: 'green' }}>✅ Camera active</p>
+        <div style={{ 
+          marginTop: '1.25rem',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '1rem',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem',
+            padding: '0.625rem 1.25rem',
+            background: 'rgba(16, 185, 129, 0.1)',
+            color: 'var(--success-color)',
+            borderRadius: '9999px',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            border: '1px solid rgba(16, 185, 129, 0.2)'
+          }}>
+            ✅ Camera Active
+          </div>
           {poseResults?.poseLandmarks ? (
-            <p style={{ color: 'blue' }}>🤖 AI tracking your pose!</p>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem',
+              padding: '0.625rem 1.25rem',
+              background: 'rgba(6, 182, 212, 0.1)',
+              color: 'var(--secondary-color)',
+              borderRadius: '9999px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              border: '1px solid rgba(6, 182, 212, 0.2)'
+            }}>
+              🤸 Pose Detected
+            </div>
           ) : (
-            <p style={{ color: 'orange' }}>Move into camera view</p>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem',
+              padding: '0.625rem 1.25rem',
+              background: 'rgba(245, 158, 11, 0.1)',
+              color: 'var(--warning-color)',
+              borderRadius: '9999px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              border: '1px solid rgba(245, 158, 11, 0.2)'
+            }}>
+              👀 Waiting for pose...
+            </div>
           )}
         </div>
       )}
