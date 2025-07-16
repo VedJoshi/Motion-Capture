@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
+import { getAllExercises } from '../../data/exercises';
 
-/**
- * Exercise selection interface component
- */
 function ExerciseSelector({ onExerciseSelect }) {
   const [selectedExercise, setSelectedExercise] = useState(null);
   
-  const exercises = [
-    { id: 'squats', name: 'Squats', description: 'Lower body strength' },
-    { id: 'pushups', name: 'Push-ups', description: 'Upper body strength' },
-    { id: 'plank', name: 'Plank', description: 'Core stability' }
-  ];
+  const exercises = getAllExercises();
 
   const handleExerciseClick = (exercise) => {
     setSelectedExercise(exercise.id);
@@ -33,11 +27,16 @@ function ExerciseSelector({ onExerciseSelect }) {
               border: '2px solid #3498db',
               borderRadius: '8px',
               background: selectedExercise === exercise.id ? '#3498db' : 'white',
-              color: selectedExercise === exercise.id ? 'white' : '#3498db'
+              color: selectedExercise === exercise.id ? 'white' : '#3498db',
+              textAlign: 'left',
+              minWidth: '200px'
             }}
           >
             <h3>{exercise.name}</h3>
             <p>{exercise.description}</p>
+            <small>Type: {exercise.type === 'time' ? 'Hold Duration' : 'Repetitions'}</small>
+            <br />
+            <small>Muscles: {exercise.targetMuscles.join(', ')}</small>
           </button>
         ))}
       </div>
@@ -54,7 +53,7 @@ function ExerciseSelector({ onExerciseSelect }) {
               fontSize: '16px'
             }}
           >
-            Start {exercises.find(e => e.id === selectedExercise)?.name} Workout
+            Start {exercises.find(e => e.id === selectedExercise)?.name} Analysis
           </button>
         </div>
       )}

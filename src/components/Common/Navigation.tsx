@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 
 /**
- * Main navigation component for switching between app views
+ * Navigation bar component with view switching functionality.
+ * Renders buttons for Dashboard, Exercises and Workout views.
  */
 function Navigation({currentView, onChangeView}) {
 

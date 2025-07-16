@@ -2,7 +2,8 @@ import { Pose } from '@mediapipe/pose';
 import { Camera } from '@mediapipe/camera_utils';
 
 /**
- * Handles MediaPipe pose detection and camera integration
+ * Manages real-time pose detection using MediaPipe Pose.
+ * Handles camera setup, pose model initialization and frame processing.
  */
 class PoseDetector {
   private pose: Pose | null;
@@ -44,8 +45,8 @@ class PoseDetector {
           await this.pose.send({ image: videoElement });
         }
       },
-      width: 640,
-      height: 480
+      width: 1280,
+      height: 720,
     });
   }
 

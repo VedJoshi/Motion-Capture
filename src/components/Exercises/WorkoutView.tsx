@@ -1,25 +1,23 @@
 import React, { useRef, useState } from 'react';
 import CameraView from '../Camera/CameraView.tsx';
-import CameraControls from '../Camera/CameraControls.tsx';
-
+import FormAnalyzer from './FormAnalyzer.tsx';
 /**
  * Main workout interface component
  */
 function WorkoutView({ selectedExercise, onReset }) {
-  const cameraRef = useRef(null);
-  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [poseResults, setPoseResults] = useState(null);
+  const [totalReps, setTotalReps] = useState(0);
 
-  const handleStartCamera = () => {
-    if (cameraRef.current) {
-      cameraRef.current.startCamera();
-      setIsCameraActive(true);
-    }
+  const handlePoseResults = (results) => {
+    setPoseResults(results);
   };
 
-  const handleStopCamera = () => {
-    if (cameraRef.current) {
-      cameraRef.current.stopCamera();
-      setIsCameraActive(false);
+  const handleRepDetected = (exerciseType, repNumber, formScore) => {
+    setTotalReps(repNumber);
+    console.log(`${exerciseType} rep #${repNumber} detected with ${formScore}% form quality!`);
+
+    if (formScore >= 90) {
+      console.log('🎉 Perfect form!');
     }
   };
 
@@ -38,17 +36,22 @@ function WorkoutView({ selectedExercise, onReset }) {
         )}
       </div>
 
+      {/* Pass pose results callback to camera */}
       <div style={{ marginBottom: '20px' }}>
-        <CameraView ref={cameraRef} />
-        <CameraControls 
-          onStartCamera={handleStartCamera}
-          onStopCamera={handleStopCamera}
-          isCameraActive={isCameraActive}
-        />
+        <CameraView onPoseResults={handlePoseResults} />
       </div>
 
+      {/* Add form analyzer */}
+      {selectedExercise && (
+        <FormAnalyzer
+          poseResults={poseResults}
+          selectedExercise={selectedExercise}
+          onRepDetected={handleRepDetected}
+        />
+      )}
+
       <div>
-        <p>Reps Completed: 0</p>
+        <p>Total Reps: {totalReps}</p>
         <button style={{
           padding: '15px 30px',
           background: '#e74c3c',
@@ -57,7 +60,7 @@ function WorkoutView({ selectedExercise, onReset }) {
           borderRadius: '5px',
           fontSize: '16px'
         }}>
-          {selectedExercise ? `Start ${selectedExercise.name}` : 'Select Exercise First'}
+          {selectedExercise ? `Analyzing ${selectedExercise.name}` : 'Select Exercise First'}
         </button>
 
         <button
@@ -74,7 +77,6 @@ function WorkoutView({ selectedExercise, onReset }) {
         >
           Reset
         </button>
-
       </div>
     </div>
   );

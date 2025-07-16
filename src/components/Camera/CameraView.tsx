@@ -4,9 +4,10 @@ import PoseOverlay from './PoseOverlay.tsx';
 import CameraControls from './CameraControls.tsx';
 
 /**
- * Camera interface with pose detection integration
+ * Manages webcam video feed and pose detection visualization.
+ * Handles camera initialization, permissions and MediaPipe integration.
  */
-function CameraView() {
+function CameraView({ onPoseResults }) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   
@@ -14,6 +15,7 @@ function CameraView() {
   const [error, setError] = useState(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [poseResults, setPoseResults] = useState(null);
+  const [videoDimensions, setVideoDimensions] = useState({ width: 640, height: 480 });
   const [poseDetector] = useState(() => new PoseDetector());
 
   useEffect(() => {
@@ -30,8 +32,8 @@ function CameraView() {
       
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: 640,
-          height: 480,
+          width: 1280,
+          height: 720,
           facingMode: 'user'
         },
         audio: false
@@ -42,6 +44,11 @@ function CameraView() {
         setIsCameraActive(true);
         
         videoRef.current.onloadedmetadata = async () => {
+          const videoElement = videoRef.current;
+          setVideoDimensions({
+            width: videoElement.videoWidth,
+            height: videoElement.videoHeight
+          });
           await initializePoseDetection();
         };
       }
@@ -60,6 +67,9 @@ function CameraView() {
       await poseDetector.initialize(videoRef.current, (results) => {
         setPoseResults(results);
         
+        if (onPoseResults) {
+          onPoseResults(results);
+        }
         if (results.poseLandmarks) {
           console.log(`Detected ${results.poseLandmarks.length} landmarks`);
         }
@@ -90,7 +100,6 @@ function CameraView() {
       {error && (
         <div style={{ color: 'red', marginBottom: '10px' }}>
           <p>{error}</p>
-          <button onClick={startCamera}>Try Again</button>
         </div>
       )}
 
@@ -125,13 +134,14 @@ function CameraView() {
         {isCameraActive && poseResults && (
           <PoseOverlay 
             poseResults={poseResults}
-            videoWidth={640}
-            videoHeight={480}
+            videoWidth={videoDimensions.width}
+            videoHeight={videoDimensions.height}
           />
         )}
       </div>
+      
       {/* Debug information panel */}
-        {poseResults?.poseLandmarks && (
+      {poseResults?.poseLandmarks && (
         <div style={{ 
             marginTop: '10px', 
             fontSize: '12px',
@@ -145,6 +155,8 @@ function CameraView() {
             <br />
             Landmarks detected: {poseResults.poseLandmarks.length}
             <br />
+            Video dimensions: {videoDimensions.width} x {videoDimensions.height}
+            <br />
             Left wrist: {poseResults.poseLandmarks[15] ? 
             `(${poseResults.poseLandmarks[15].x.toFixed(2)}, ${poseResults.poseLandmarks[15].y.toFixed(2)})` 
             : 'Not detected'}
@@ -153,7 +165,8 @@ function CameraView() {
             `(${poseResults.poseLandmarks[16].x.toFixed(2)}, ${poseResults.poseLandmarks[16].y.toFixed(2)})` 
             : 'Not detected'}
         </div>
-        )}
+      )}
+      
       {isCameraActive && (
         <div style={{ marginTop: '10px' }}>
           <p style={{ color: 'green' }}>✅ Camera active</p>
