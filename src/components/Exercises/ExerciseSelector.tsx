@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
+/**
+ * Exercise selection interface component
+ */
 function ExerciseSelector({ onExerciseSelect }) {
   const [selectedExercise, setSelectedExercise] = useState(null);
   
-  // List of available exercises
   const exercises = [
     { id: 'squats', name: 'Squats', description: 'Lower body strength' },
     { id: 'pushups', name: 'Push-ups', description: 'Upper body strength' },
@@ -12,7 +14,6 @@ function ExerciseSelector({ onExerciseSelect }) {
 
   const handleExerciseClick = (exercise) => {
     setSelectedExercise(exercise.id);
-    // If parent component provided a callback, call it
     if (onExerciseSelect) {
       onExerciseSelect(exercise);
     }

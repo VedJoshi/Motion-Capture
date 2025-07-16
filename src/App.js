@@ -6,6 +6,9 @@ import ExerciseSelector from './components/Exercises/ExerciseSelector.tsx';
 import WorkoutView from './components/Exercises/WorkoutView.tsx';
 import Dashboard from './components/Common/Dashboard.tsx';
 
+/**
+ * Main application component managing view state and navigation
+ */
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedExercise, setSelectedExercise] = useState(null);
@@ -38,7 +41,6 @@ function App() {
         />;
     }
     
-    // Default
     return <Dashboard userStats={userStats}/>;
   };
 
@@ -50,7 +52,7 @@ function App() {
         onChangeView={setCurrentView}
       />
       <main>
-        {renderCurrentView()} {/* Show different component based on state */}
+        {renderCurrentView()}
       </main>
     </div>
   );

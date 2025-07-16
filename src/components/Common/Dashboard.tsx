@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * Dashboard component displaying user workout statistics
+ */
 function Dashboard({userStats}) {
 
   return (

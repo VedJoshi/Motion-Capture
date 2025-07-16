@@ -1,3 +1,6 @@
+/**
+ * Reports web vitals metrics if callback function is provided
+ */
 const reportWebVitals = onPerfEntry => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {

@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 
+/**
+ * Main navigation component for switching between app views
+ */
 function Navigation({currentView, onChangeView}) {
 
     const handleNavClick = (viewName) => {
