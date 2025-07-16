@@ -445,3 +445,513 @@ export class AdvancedPushupAnalyzer {
         this.rangeHistory = [];
     }
 }
+
+// Lunge analyzer
+export class LungeAnalyzer {
+    constructor() {
+        this.stepHistory = [];
+        this.balanceHistory = [];
+        this.lastLegDetected = null;
+    }
+
+    analyze(landmarks) {
+        if (!landmarks || landmarks.length < 33) {
+            return {
+                isLunge: false,
+                legDetected: null,
+                kneeAlignment: { front: 0, back: 0 },
+                balance: 0,
+                depth: 0,
+                feedback: ['Cannot detect pose']
+            };
+        }
+
+        const analysis = {
+            isLunge: this.detectLungePosition(landmarks),
+            legDetected: this.detectActiveLeg(landmarks),
+            kneeAlignment: this.checkKneeAlignment(landmarks),
+            balance: this.calculateBalance(landmarks),
+            depth: this.calculateDepth(landmarks),
+            feedback: []
+        };
+
+        analysis.feedback = this.generateFeedback(analysis);
+        return analysis;
+    }
+
+    detectLungePosition(landmarks) {
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        const leftKnee = landmarks[25];
+        const rightKnee = landmarks[26];
+        const leftAnkle = landmarks[27];
+        const rightAnkle = landmarks[28];
+
+        // Check if legs are in split stance
+        const ankleDistance = Math.abs(leftAnkle.x - rightAnkle.x);
+        const kneeHeight = Math.abs(leftKnee.y - rightKnee.y);
+        
+        return ankleDistance > 0.15 && kneeHeight > 0.05;
+    }
+
+    detectActiveLeg(landmarks) {
+        const leftAnkle = landmarks[27];
+        const rightAnkle = landmarks[28];
+        
+        // Front leg is the one more forward (lower x value in typical view)
+        return leftAnkle.x < rightAnkle.x ? 'left' : 'right';
+    }
+
+    checkKneeAlignment(landmarks) {
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        const leftKnee = landmarks[25];
+        const rightKnee = landmarks[26];
+        const leftAnkle = landmarks[27];
+        const rightAnkle = landmarks[28];
+
+        const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+        const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+
+        return {
+            front: leftKneeAngle,
+            back: rightKneeAngle,
+            frontGood: leftKneeAngle >= 80 && leftKneeAngle <= 100,
+            backGood: rightKneeAngle >= 80 && rightKneeAngle <= 100
+        };
+    }
+
+    calculateBalance(landmarks) {
+        const nose = landmarks[0];
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        
+        const centerHip = {
+            x: (leftHip.x + rightHip.x) / 2,
+            y: (leftHip.y + rightHip.y) / 2
+        };
+        
+        const balance = Math.abs(nose.x - centerHip.x);
+        return Math.max(0, 100 - (balance * 500));
+    }
+
+    calculateDepth(landmarks) {
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        const leftKnee = landmarks[25];
+        const rightKnee = landmarks[26];
+        
+        const avgHipHeight = (leftHip.y + rightHip.y) / 2;
+        const avgKneeHeight = (leftKnee.y + rightKnee.y) / 2;
+        
+        const depth = avgKneeHeight - avgHipHeight;
+        return Math.max(0, Math.min(100, depth * 500));
+    }
+
+    generateFeedback(analysis) {
+        const feedback = [];
+        
+        if (!analysis.isLunge) {
+            feedback.push('Step into lunge position');
+            return feedback;
+        }
+
+        if (!analysis.kneeAlignment.frontGood) {
+            feedback.push('Adjust front knee angle');
+        }
+        if (!analysis.kneeAlignment.backGood) {
+            feedback.push('Lower back knee more');
+        }
+        if (analysis.balance < 70) {
+            feedback.push('Improve balance and stability');
+        }
+        if (analysis.depth < 50) {
+            feedback.push('Go deeper into the lunge');
+        }
+
+        if (feedback.length === 0) {
+            feedback.push('Excellent lunge form!');
+        }
+
+        return feedback;
+    }
+
+    reset() {
+        this.stepHistory = [];
+        this.balanceHistory = [];
+        this.lastLegDetected = null;
+    }
+}
+
+// Bicep curl analyzer
+export class BicepCurlAnalyzer {
+    constructor() {
+        this.curlHistory = [];
+        this.tempoData = [];
+    }
+
+    analyze(landmarks) {
+        if (!landmarks || landmarks.length < 33) {
+            return {
+                isCurling: false,
+                leftArmAngle: 0,
+                rightArmAngle: 0,
+                shoulderStability: 0,
+                tempo: 'normal',
+                feedback: ['Cannot detect pose']
+            };
+        }
+
+        const analysis = {
+            isCurling: this.detectCurlPosition(landmarks),
+            leftArmAngle: this.calculateArmAngle(landmarks, 'left'),
+            rightArmAngle: this.calculateArmAngle(landmarks, 'right'),
+            shoulderStability: this.checkShoulderStability(landmarks),
+            tempo: this.analyzeTempo(landmarks),
+            feedback: []
+        };
+
+        analysis.feedback = this.generateFeedback(analysis);
+        return analysis;
+    }
+
+    detectCurlPosition(landmarks) {
+        const leftShoulder = landmarks[11];
+        const rightShoulder = landmarks[12];
+        const leftElbow = landmarks[13];
+        const rightElbow = landmarks[14];
+        
+        // Check if elbows are roughly at shoulder level (standing position)
+        const leftElbowBelowShoulder = leftElbow.y > leftShoulder.y;
+        const rightElbowBelowShoulder = rightElbow.y > rightShoulder.y;
+        
+        return leftElbowBelowShoulder && rightElbowBelowShoulder;
+    }
+
+    calculateArmAngle(landmarks, side) {
+        const shoulderIndex = side === 'left' ? 11 : 12;
+        const elbowIndex = side === 'left' ? 13 : 14;
+        const wristIndex = side === 'left' ? 15 : 16;
+        
+        return calculateAngle(
+            landmarks[shoulderIndex],
+            landmarks[elbowIndex],
+            landmarks[wristIndex]
+        );
+    }
+
+    checkShoulderStability(landmarks) {
+        const leftShoulder = landmarks[11];
+        const rightShoulder = landmarks[12];
+        const leftElbow = landmarks[13];
+        const rightElbow = landmarks[14];
+        
+        // Check if elbows stay close to body
+        const leftElbowDistance = Math.abs(leftElbow.x - leftShoulder.x);
+        const rightElbowDistance = Math.abs(rightElbow.x - rightShoulder.x);
+        
+        const avgDistance = (leftElbowDistance + rightElbowDistance) / 2;
+        return Math.max(0, 100 - (avgDistance * 300));
+    }
+
+    analyzeTempo(landmarks) {
+        const leftAngle = this.calculateArmAngle(landmarks, 'left');
+        const rightAngle = this.calculateArmAngle(landmarks, 'right');
+        const avgAngle = (leftAngle + rightAngle) / 2;
+        
+        this.tempoData.push({
+            angle: avgAngle,
+            timestamp: Date.now()
+        });
+        
+        if (this.tempoData.length > 10) {
+            this.tempoData.shift();
+        }
+        
+        if (this.tempoData.length < 5) return 'normal';
+        
+        const recentChange = Math.abs(
+            this.tempoData[this.tempoData.length - 1].angle - 
+            this.tempoData[this.tempoData.length - 5].angle
+        );
+        
+        if (recentChange > 30) return 'too fast';
+        if (recentChange < 5) return 'too slow';
+        return 'normal';
+    }
+
+    generateFeedback(analysis) {
+        const feedback = [];
+        
+        if (!analysis.isCurling) {
+            feedback.push('Stand upright with arms at sides');
+            return feedback;
+        }
+
+        if (analysis.shoulderStability < 70) {
+            feedback.push('Keep elbows close to your body');
+        }
+        
+        if (analysis.tempo === 'too fast') {
+            feedback.push('Slow down - control the movement');
+        } else if (analysis.tempo === 'too slow') {
+            feedback.push('Maintain steady tempo');
+        }
+
+        const avgAngle = (analysis.leftArmAngle + analysis.rightArmAngle) / 2;
+        if (avgAngle < 50) {
+            feedback.push('Curl weights higher');
+        }
+
+        if (feedback.length === 0) {
+            feedback.push('Good curl form!');
+        }
+
+        return feedback;
+    }
+
+    reset() {
+        this.curlHistory = [];
+        this.tempoData = [];
+    }
+}
+
+// Shoulder press analyzer
+export class ShoulderPressAnalyzer {
+    constructor() {
+        this.pressHistory = [];
+        this.stabilityHistory = [];
+    }
+
+    analyze(landmarks) {
+        if (!landmarks || landmarks.length < 33) {
+            return {
+                isPressing: false,
+                leftShoulderAngle: 0,
+                rightShoulderAngle: 0,
+                coreStability: 0,
+                wristAlignment: { left: true, right: true },
+                feedback: ['Cannot detect pose']
+            };
+        }
+
+        const analysis = {
+            isPressing: this.detectPressPosition(landmarks),
+            leftShoulderAngle: this.calculateShoulderAngle(landmarks, 'left'),
+            rightShoulderAngle: this.calculateShoulderAngle(landmarks, 'right'),
+            coreStability: this.checkCoreStability(landmarks),
+            wristAlignment: this.checkWristAlignment(landmarks),
+            feedback: []
+        };
+
+        analysis.feedback = this.generateFeedback(analysis);
+        return analysis;
+    }
+
+    detectPressPosition(landmarks) {
+        const leftShoulder = landmarks[11];
+        const rightShoulder = landmarks[12];
+        const leftWrist = landmarks[15];
+        const rightWrist = landmarks[16];
+        
+        // Check if wrists are above shoulders (pressing position)
+        const leftWristAbove = leftWrist.y < leftShoulder.y;
+        const rightWristAbove = rightWrist.y < rightShoulder.y;
+        
+        return leftWristAbove || rightWristAbove;
+    }
+
+    calculateShoulderAngle(landmarks, side) {
+        const hipIndex = side === 'left' ? 23 : 24;
+        const shoulderIndex = side === 'left' ? 11 : 12;
+        const elbowIndex = side === 'left' ? 13 : 14;
+        
+        return calculateAngle(
+            landmarks[hipIndex],
+            landmarks[shoulderIndex],
+            landmarks[elbowIndex]
+        );
+    }
+
+    checkCoreStability(landmarks) {
+        const nose = landmarks[0];
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        
+        const centerHip = {
+            x: (leftHip.x + rightHip.x) / 2,
+            y: (leftHip.y + rightHip.y) / 2
+        };
+        
+        const stability = Math.abs(nose.x - centerHip.x);
+        return Math.max(0, 100 - (stability * 400));
+    }
+
+    checkWristAlignment(landmarks) {
+        const leftShoulder = landmarks[11];
+        const rightShoulder = landmarks[12];
+        const leftWrist = landmarks[15];
+        const rightWrist = landmarks[16];
+        
+        const leftAligned = Math.abs(leftWrist.x - leftShoulder.x) < 0.08;
+        const rightAligned = Math.abs(rightWrist.x - rightShoulder.x) < 0.08;
+        
+        return { left: leftAligned, right: rightAligned };
+    }
+
+    generateFeedback(analysis) {
+        const feedback = [];
+        
+        if (!analysis.isPressing) {
+            feedback.push('Raise weights to shoulder height');
+            return feedback;
+        }
+
+        if (analysis.coreStability < 70) {
+            feedback.push('Engage core for stability');
+        }
+        
+        if (!analysis.wristAlignment.left || !analysis.wristAlignment.right) {
+            feedback.push('Keep wrists aligned over shoulders');
+        }
+
+        const avgAngle = (analysis.leftShoulderAngle + analysis.rightShoulderAngle) / 2;
+        if (avgAngle < 160) {
+            feedback.push('Press weights higher overhead');
+        }
+
+        if (feedback.length === 0) {
+            feedback.push('Excellent press form!');
+        }
+
+        return feedback;
+    }
+
+    reset() {
+        this.pressHistory = [];
+        this.stabilityHistory = [];
+    }
+}
+
+// Sit-up analyzer
+export class SitupAnalyzer {
+    constructor() {
+        this.situpHistory = [];
+        this.neckStrainHistory = [];
+    }
+
+    analyze(landmarks) {
+        if (!landmarks || landmarks.length < 33) {
+            return {
+                isSittingUp: false,
+                torsoAngle: 0,
+                neckStrain: 0,
+                controlledMovement: 0,
+                feedback: ['Cannot detect pose']
+            };
+        }
+
+        const analysis = {
+            isSittingUp: this.detectSitupPosition(landmarks),
+            torsoAngle: this.calculateTorsoAngle(landmarks),
+            neckStrain: this.checkNeckStrain(landmarks),
+            controlledMovement: this.checkControlledMovement(landmarks),
+            feedback: []
+        };
+
+        analysis.feedback = this.generateFeedback(analysis);
+        return analysis;
+    }
+
+    detectSitupPosition(landmarks) {
+        const nose = landmarks[0];
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        
+        const avgHipY = (leftHip.y + rightHip.y) / 2;
+        
+        // Check if torso is elevated (nose higher than hips)
+        return nose.y < avgHipY;
+    }
+
+    calculateTorsoAngle(landmarks) {
+        const nose = landmarks[0];
+        const leftHip = landmarks[23];
+        const rightHip = landmarks[24];
+        const leftKnee = landmarks[25];
+        const rightKnee = landmarks[26];
+        
+        const avgHip = {
+            x: (leftHip.x + rightHip.x) / 2,
+            y: (leftHip.y + rightHip.y) / 2
+        };
+        
+        const avgKnee = {
+            x: (leftKnee.x + rightKnee.x) / 2,
+            y: (leftKnee.y + rightKnee.y) / 2
+        };
+        
+        return calculateAngle(avgKnee, avgHip, nose);
+    }
+
+    checkNeckStrain(landmarks) {
+        const nose = landmarks[0];
+        const leftShoulder = landmarks[11];
+        const rightShoulder = landmarks[12];
+        
+        const avgShoulderY = (leftShoulder.y + rightShoulder.y) / 2;
+        const neckExtension = Math.abs(nose.y - avgShoulderY);
+        
+        return Math.max(0, 100 - (neckExtension * 1000));
+    }
+
+    checkControlledMovement(landmarks) {
+        const torsoAngle = this.calculateTorsoAngle(landmarks);
+        
+        this.situpHistory.push(torsoAngle);
+        if (this.situpHistory.length > 5) {
+            this.situpHistory.shift();
+        }
+        
+        if (this.situpHistory.length < 3) return 50;
+        
+        const smoothness = this.situpHistory.reduce((sum, angle, i) => {
+            if (i === 0) return 0;
+            return sum + Math.abs(angle - this.situpHistory[i - 1]);
+        }, 0) / (this.situpHistory.length - 1);
+        
+        return Math.max(0, 100 - smoothness);
+    }
+
+    generateFeedback(analysis) {
+        const feedback = [];
+        
+        if (!analysis.isSittingUp) {
+            feedback.push('Lie down and begin sit-up');
+            return feedback;
+        }
+
+        if (analysis.neckStrain < 70) {
+            feedback.push('Avoid straining your neck');
+        }
+        
+        if (analysis.controlledMovement < 60) {
+            feedback.push('Move more slowly and controlled');
+        }
+
+        if (analysis.torsoAngle < 30) {
+            feedback.push('Sit up higher toward knees');
+        }
+
+        if (feedback.length === 0) {
+            feedback.push('Good sit-up form!');
+        }
+
+        return feedback;
+    }
+
+    reset() {
+        this.situpHistory = [];
+        this.neckStrainHistory = [];
+    }
+}

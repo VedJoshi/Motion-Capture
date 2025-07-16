@@ -16,14 +16,6 @@ function ExerciseSelector({ onExerciseSelect }) {
     }
   };
 
-  const getExerciseEmoji = (exerciseName) => {
-    const name = exerciseName.toLowerCase();
-    if (name.includes('squat')) return '🦵';
-    if (name.includes('pushup') || name.includes('push-up')) return '💪';
-    if (name.includes('plank')) return '🏋️';
-    return '🤸';
-  };
-
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{
@@ -78,7 +70,6 @@ function ExerciseSelector({ onExerciseSelect }) {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
-              <span style={{ fontSize: '32px' }}>{getExerciseEmoji(exercise.name)}</span>
               <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700' }}>{exercise.name}</h3>
             </div>
             
