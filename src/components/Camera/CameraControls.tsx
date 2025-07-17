@@ -37,14 +37,6 @@ function CameraControls({ onStartCamera, onStopCamera, isCameraActive }) {
         gap: '0.5rem',
         marginRight: 'auto',
       }}>
-        <img 
-          src="/fitformlogo.png" 
-          alt="FitForm Logo" 
-          style={{
-            height: '40px',
-            display: { xs: 'none', sm: 'block' }
-          }}
-        />
       </div>
       
       {!isCameraActive ? (
@@ -55,7 +47,10 @@ function CameraControls({ onStartCamera, onStopCamera, isCameraActive }) {
             background: `linear-gradient(135deg, var(--success-color) 0%, var(--accent-light) 100%)`,
             color: 'white',
             boxShadow: 'var(--shadow-md)',
-            borderColor: 'var(--success-color)'
+            borderColor: 'var(--success-color)',
+            position: 'relative',
+            margin: '10px 50px',
+            display: 'block'
           }}
           onMouseOver={(e) => {
             e.target.style.transform = 'translateY(-1px)';

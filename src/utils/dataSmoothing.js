@@ -1,4 +1,6 @@
-// Applies moving average filter to reduce noise in pose detection data
+/**
+ * Applies moving average filter to reduce noise in pose data
+ */
 export class MovingAverage {
   constructor(windowSize = 5) {
     this.windowSize = windowSize;
@@ -35,7 +37,9 @@ export class MovingAverage {
   }
 }
 
-// Smoothed angle calculator
+/**
+ * Provides smoothed angle measurements for joints
+ */
 export class SmoothedAngles {
   constructor() {
     this.filters = {
@@ -68,7 +72,9 @@ export class SmoothedAngles {
   }
 }
 
-// Detect if movement is stable (not changing rapidly)
+/**
+ * Checks if joint angles are stable between frames
+ */
 export function isMovementStable(angles, previousAngles, threshold = 5) {
  if (!angles || !previousAngles) return false;
 

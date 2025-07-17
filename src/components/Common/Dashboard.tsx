@@ -32,15 +32,10 @@ function Dashboard() {
       }
 
       if (reports && reports.length > 0) {
-        // Calculate total workouts
         const totalWorkouts = reports.length;
-        
-        // Calculate total reps (sum of all reps from all workouts)
         const totalReps = reports.reduce((sum, report) => {
           return sum + (report.total_reps || 0);
         }, 0);
-
-        // Calculate current streak (consecutive days with workouts)
         const currentStreak = calculateWorkoutStreak(reports);
 
         setUserStats({
@@ -72,7 +67,6 @@ function Dashboard() {
         return;
       }
 
-      // Get the 5 most recent workouts
       const recent = reports?.slice(0, 5) || [];
       setRecentWorkouts(recent);
     } catch (error) {
@@ -83,12 +77,10 @@ function Dashboard() {
   const calculateWorkoutStreak = (reports) => {
     if (!reports || reports.length === 0) return 0;
 
-    // Sort reports by date (most recent first)
     const sortedReports = reports.sort((a, b) => 
       new Date(b.workout_date).getTime() - new Date(a.workout_date).getTime()
     );
 
-    // Get unique workout dates
     const workoutDates = [...new Set(sortedReports.map(report => 
       new Date(report.workout_date).toDateString()
     ))];
@@ -139,16 +131,12 @@ function Dashboard() {
   }
 
   return (
-    <div style={{ 
-      maxWidth: '100%', 
-      margin: '0 auto',
-      width: '100%'
-    }}>
+    <div className="dashboard-container">
       {/* Welcome Header */}
       <div style={{
         textAlign: 'center',
         marginBottom: '2.5rem',
-        padding: '2.5rem 2rem',
+        padding: 'clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2rem)',
         background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)',
         borderRadius: 'var(--border-radius-xl)',
         color: 'white',
@@ -165,16 +153,14 @@ function Dashboard() {
           background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%)',
           pointerEvents: 'none'
         }}></div>
-        <h2 style={{ 
+        <h2 className="responsive-text-3xl" style={{ 
           margin: '0 0 0.75rem 0', 
-          fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
           fontWeight: '700',
           position: 'relative',
           zIndex: 1
         }}>📊 Your Fitness Dashboard</h2>
-        <p style={{ 
+        <p className="responsive-text-xl" style={{ 
           margin: 0, 
-          fontSize: 'clamp(1rem, 2vw, 1.125rem)', 
           opacity: 0.9,
           fontWeight: '500',
           position: 'relative',
@@ -185,17 +171,12 @@ function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.5rem',
-        marginBottom: '2.5rem'
-      }}>
+      <div className="dashboard-stats-grid">
         
         {/* Total Workouts Card */}
         <div style={{
-          background: 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%)',
-          padding: '2rem',
+          background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%)',
+          padding: 'clamp(1.5rem, 3vw, 2rem)',
           borderRadius: 'var(--border-radius-xl)',
           color: 'white',
           textAlign: 'center',
@@ -203,7 +184,8 @@ function Dashboard() {
           transform: 'translateY(0)',
           transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          cursor: 'pointer'
         }}
         onMouseOver={(e) => {
           e.currentTarget.style.transform = 'translateY(-2px)';
@@ -223,17 +205,88 @@ function Dashboard() {
             borderRadius: '50%',
             transform: 'translate(30px, -30px)'
           }}></div>
-          <div style={{ fontSize: 'clamp(2.5rem, 6vw, 3rem)', marginBottom: '0.75rem', position: 'relative', zIndex: 1 }}>🔄</div>
-          <div style={{ fontSize: 'clamp(2rem, 5vw, 2.25rem)', fontWeight: 'bold', marginBottom: '0.5rem', position: 'relative', zIndex: 1 }}>
+          <div style={{ 
+            fontSize: 'clamp(2rem, 6vw, 3rem)', 
+            marginBottom: '0.75rem', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>💪</div>
+          <div className="responsive-text-3xl" style={{ 
+            fontWeight: 'bold', 
+            marginBottom: '0.5rem', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>
+            {userStats.totalWorkouts}
+          </div>
+          <div style={{ 
+            fontSize: 'clamp(0.875rem, 2vw, 1rem)', 
+            opacity: 0.9, 
+            fontWeight: '500', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>Total Workouts</div>
+        </div>
+
+        {/* Total Reps Card */}
+        <div style={{
+          background: 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%)',
+          padding: 'clamp(1.5rem, 3vw, 2rem)',
+          borderRadius: 'var(--border-radius-xl)',
+          color: 'white',
+          textAlign: 'center',
+          boxShadow: 'var(--shadow-lg)',
+          transform: 'translateY(0)',
+          transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          position: 'relative',
+          overflow: 'hidden',
+          cursor: 'pointer'
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-xl)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '100px',
+            height: '100px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '50%',
+            transform: 'translate(30px, -30px)'
+          }}></div>
+          <div style={{ 
+            fontSize: 'clamp(2rem, 6vw, 3rem)', 
+            marginBottom: '0.75rem', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>🔄</div>
+          <div className="responsive-text-3xl" style={{ 
+            fontWeight: 'bold', 
+            marginBottom: '0.5rem', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>
             {userStats.totalReps}
           </div>
-          <div style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', opacity: 0.9, fontWeight: '500', position: 'relative', zIndex: 1 }}>Total Reps</div>
+          <div style={{ 
+            fontSize: 'clamp(0.875rem, 2vw, 1rem)', 
+            opacity: 0.9, 
+            fontWeight: '500', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>Total Reps</div>
         </div>
 
         {/* Current Streak Card */}
         <div style={{
           background: 'linear-gradient(135deg, var(--warning-color) 0%, var(--secondary-color) 100%)',
-          padding: '2rem',
+          padding: 'clamp(1.5rem, 3vw, 2rem)',
           borderRadius: 'var(--border-radius-xl)',
           color: 'white',
           textAlign: 'center',
@@ -241,7 +294,8 @@ function Dashboard() {
           transform: 'translateY(0)',
           transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          cursor: 'pointer'
         }}
         onMouseOver={(e) => {
           e.currentTarget.style.transform = 'translateY(-2px)';
@@ -261,11 +315,27 @@ function Dashboard() {
             borderRadius: '50%',
             transform: 'translate(30px, -30px)'
           }}></div>
-          <div style={{ fontSize: 'clamp(2.5rem, 6vw, 3rem)', marginBottom: '0.75rem', position: 'relative', zIndex: 1 }}>🔥</div>
-          <div style={{ fontSize: 'clamp(2rem, 5vw, 2.25rem)', fontWeight: 'bold', marginBottom: '0.5rem', position: 'relative', zIndex: 1 }}>
+          <div style={{ 
+            fontSize: 'clamp(2rem, 6vw, 3rem)', 
+            marginBottom: '0.75rem', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>🔥</div>
+          <div className="responsive-text-3xl" style={{ 
+            fontWeight: 'bold', 
+            marginBottom: '0.5rem', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>
             {userStats.currentStreak}
           </div>
-          <div style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', opacity: 0.9, fontWeight: '500', position: 'relative', zIndex: 1 }}>Day Streak</div>
+          <div style={{ 
+            fontSize: 'clamp(0.875rem, 2vw, 1rem)', 
+            opacity: 0.9, 
+            fontWeight: '500', 
+            position: 'relative', 
+            zIndex: 1 
+          }}>Day Streak</div>
         </div>
       </div>
 
@@ -273,16 +343,15 @@ function Dashboard() {
       {recentWorkouts.length > 0 && (
         <div style={{
           background: 'var(--surface-white)',
-          padding: '2rem',
+          padding: 'clamp(1.5rem, 3vw, 2rem)',
           borderRadius: 'var(--border-radius-xl)',
           marginBottom: '2rem',
           border: '1px solid var(--neutral-200)',
           boxShadow: 'var(--shadow-sm)'
         }}>
-          <h3 style={{
+          <h3 className="responsive-text-2xl" style={{
             margin: '0 0 1.5rem 0',
             color: 'var(--neutral-700)',
-            fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
             fontWeight: '600'
           }}>📈 Recent Workouts</h3>
           
@@ -295,22 +364,33 @@ function Dashboard() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '1rem',
+                padding: 'clamp(0.75rem, 2vw, 1rem)',
                 background: 'var(--neutral-50)',
-                borderRadius: 'var(--border-radius-md)',
-                border: '1px solid var(--neutral-200)'
+                borderRadius: 'var(--border-radius-lg)',
+                border: '1px solid var(--neutral-200)',
+                transition: 'all 0.2s',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'var(--neutral-100)';
+                e.currentTarget.style.borderColor = 'var(--primary-light)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'var(--neutral-50)';
+                e.currentTarget.style.borderColor = 'var(--neutral-200)';
               }}>
                 <div>
                   <div style={{
                     fontWeight: '600',
                     color: 'var(--neutral-700)',
                     marginBottom: '0.25rem',
-                    textTransform: 'capitalize'
+                    textTransform: 'capitalize',
+                    fontSize: 'clamp(0.875rem, 2vw, 1rem)'
                   }}>
                     {workout.exercise_name}
                   </div>
                   <div style={{
-                    fontSize: '0.875rem',
+                    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
                     color: 'var(--neutral-500)'
                   }}>
                     {formatDate(workout.created_at)} • {workout.total_reps || workout.duration} {workout.total_reps ? 'reps' : 'sec'}
@@ -321,7 +401,7 @@ function Dashboard() {
                   background: getScoreColor(workout.overall_score || 0),
                   color: 'white',
                   borderRadius: 'var(--border-radius-sm)',
-                  fontSize: '0.875rem',
+                  fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
                   fontWeight: '600'
                 }}>
                   {Math.round(workout.overall_score || 0)}%
@@ -335,7 +415,7 @@ function Dashboard() {
       {/* Motivational Section */}
       <div style={{
         background: 'var(--surface-white)',
-        padding: '2rem',
+        padding: 'clamp(1.5rem, 3vw, 2rem)',
         borderRadius: 'var(--border-radius-xl)',
         textAlign: 'center',
         border: '1px solid var(--neutral-200)',
@@ -351,18 +431,16 @@ function Dashboard() {
           height: '4px',
           background: 'linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%)'
         }}></div>
-        <h3 style={{ 
+        <h3 className="responsive-text-2xl" style={{ 
           margin: '0 0 1rem 0', 
           color: 'var(--neutral-700)',
-          fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
           fontWeight: '600'
         }}>
           {userStats.totalWorkouts === 0 ? '🌟 Welcome to FitForm!' : '💪 Keep Going Strong!'}
         </h3>
-        <p style={{ 
+        <p className="responsive-text-xl" style={{ 
           margin: '0 0 1.5rem 0', 
           color: 'var(--neutral-600)', 
-          fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
           lineHeight: '1.6',
           maxWidth: '600px',
           marginLeft: 'auto',
@@ -373,18 +451,28 @@ function Dashboard() {
             : `You've completed ${userStats.totalWorkouts} workouts and ${userStats.totalReps} reps! Ready for your next session?`
           }
         </p>
-        <div style={{
+        <div className="responsive-button" style={{
           display: 'inline-flex',
           alignItems: 'center',
           gap: '0.5rem',
-          padding: '0.875rem 2rem',
+          padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem)',
           background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%)',
           color: 'white',
-          borderRadius: 'var(--border-radius-md)',
+          borderRadius: 'var(--border-radius-lg)',
           fontWeight: '600',
-          fontSize: '0.95rem',
+          fontSize: 'clamp(0.875rem, 2vw, 1rem)',
           boxShadow: 'var(--shadow-sm)',
-          border: 'none'
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = 'translateY(-1px)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
         }}>
           🎯 {userStats.totalWorkouts === 0 ? 'Start your first workout' : 'Continue your fitness journey'}
         </div>

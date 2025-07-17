@@ -18,12 +18,6 @@ function AppContent() {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const { user, loading } = useAuth();
 
-  const userStats = {
-    totalWorkouts: 23,
-    totalReps: 223,
-    currentStreak: 43
-  }
-
   const handleExerciseSelect = (exercise) => {
     setSelectedExercise(exercise);
     setCurrentView('workout');
@@ -68,7 +62,7 @@ function AppContent() {
 
   const renderCurrentView = () => {
     if (currentView === 'dashboard') {
-      return <Dashboard userStats={userStats}/>;
+      return <Dashboard />;
     } else if (currentView === 'exercises') {
       return <ExerciseSelector onExerciseSelect={handleExerciseSelect}/>;
     } else if (currentView === 'workout') {
@@ -82,21 +76,40 @@ function AppContent() {
       return <UserProfile />;
     }
     
-    return <Dashboard userStats={userStats}/>;
+    return <Dashboard />;
   };
 
   return (
-    <div className="App">
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--neutral-50)',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       <Header />
       <Navigation 
         currentView={currentView} 
         onChangeView={setCurrentView}
       />
       <main style={{
-        minHeight: 'calc(100vh - 120px)', // Adjust based on header/nav height
-        background: 'var(--neutral-50)'
+        flex: 1,
+        width: '100%',
+        maxWidth: '1600px',
+        margin: '0 auto',
+        padding: '0 1rem 2rem 1rem',
+        background: 'transparent'
       }}>
-        {renderCurrentView()}
+        <div style={{
+          width: '100%',
+          background: 'var(--surface-white)',
+          borderRadius: 'var(--border-radius-xl)',
+          boxShadow: 'var(--shadow-sm)',
+          border: '1px solid var(--neutral-200)',
+          padding: '2rem',
+          minHeight: 'calc(100vh - 200px)'
+        }}>
+          {renderCurrentView()}
+        </div>
       </main>
     </div>
   );

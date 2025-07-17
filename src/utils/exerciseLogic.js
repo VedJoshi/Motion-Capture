@@ -1,6 +1,8 @@
 import { calculateAngle } from './angleCalculation';
 
-// Evaluates plank hold time and position stability
+/**
+ * Tracks plank position stability and duration
+ */
 export class PlankAnalyzer {
     constructor() {
         this.startTime = null;
@@ -34,7 +36,7 @@ export class PlankAnalyzer {
 
     detectPlankPosition(landmarks) {
         try {
-            // Check if person is in plank position
+            // Detect if person is in plank position
             const nose = landmarks[0];
             const leftShoulder = landmarks[11];
             const rightShoulder = landmarks[12];
@@ -48,14 +50,12 @@ export class PlankAnalyzer {
             const hipY = (leftHip.y + rightHip.y) / 2;
             const ankleY = (leftAnkle.y + rightAnkle.y) / 2;
 
-            // In plank: shoulders should be higher than hips, hips higher than ankles
+            // Check body alignment for plank position
             const shoulderHipDiff = shoulderY - hipY;
             const hipAnkleDiff = hipY - ankleY;
 
-            // Check if body is roughly horizontal (plank position)
+            // Body should be horizontal and low enough in the frame
             const isHorizontal = Math.abs(shoulderHipDiff) < 0.15 && Math.abs(hipAnkleDiff) < 0.15;
-
-            // Check if person is low enough (not standing)
             const isLowEnough = shoulderY > 0.3; // Below top 30% of frame
 
             return isHorizontal && isLowEnough;
@@ -193,7 +193,9 @@ export class PlankAnalyzer {
     }
 }
 
-// Advanced squat analysis
+/**
+ * Analyzes squat form for depth, tracking, tempo, and symmetry
+ */
 export class AdvancedSquatAnalyzer {
     constructor() {
         this.depthHistory = [];
@@ -441,7 +443,9 @@ export class AdvancedPushupAnalyzer {
     }
 }
 
-// Lunge analyzer
+/**
+ * Analyzes lunge position for depth, balance, and knee alignment
+ */
 export class LungeAnalyzer {
     constructor() {
         this.stepHistory = [];
@@ -578,7 +582,9 @@ export class LungeAnalyzer {
     }
 }
 
-// Bicep curl analyzer
+/**
+ * Analyzes bicep curl form for angle, tempo, and shoulder stability
+ */
 export class BicepCurlAnalyzer {
     constructor() {
         this.curlHistory = [];
@@ -711,7 +717,9 @@ export class BicepCurlAnalyzer {
     }
 }
 
-// Shoulder press analyzer
+/**
+ * Analyzes shoulder press form for angle, core stability, and wrist alignment
+ */
 export class ShoulderPressAnalyzer {
     constructor() {
         this.pressHistory = [];
@@ -828,7 +836,9 @@ export class ShoulderPressAnalyzer {
     }
 }
 
-// Sit-up analyzer
+/**
+ * Analyzes sit-up form for torso angle, neck strain, and movement control
+ */
 export class SitupAnalyzer {
     constructor() {
         this.situpHistory = [];

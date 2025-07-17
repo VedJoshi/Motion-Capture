@@ -34,7 +34,7 @@ export const saveWorkoutReport = async (userId, workoutData) => {
 }
 
 /**
- * Helper function to calculate workout statistics
+ * Calculates workout statistics from rep scores
  */
 export const calculateWorkoutStats = (repScores) => {
   if (!repScores || repScores.length === 0) {
@@ -70,7 +70,7 @@ export const calculateWorkoutStats = (repScores) => {
 }
 
 /**
- * Helper function to generate AI feedback based on performance
+ * Generates feedback based on exercise performance metrics
  */
 export const generateWorkoutFeedback = (exerciseName, stats, repScores) => {
   const { averageScore, bestRepScore, overallScore } = stats

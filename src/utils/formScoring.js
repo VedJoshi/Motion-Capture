@@ -1,23 +1,23 @@
 /**
- * Evaluates exercise form quality and provides feedback based on pose detection data.
+ * Evaluates exercise form quality based on pose detection data
  */
 export class FormQualityScorer {
   
-  // Score squat form (0-100)
+  // Score squat form
   scoreSquat(angles, landmarks) {
     let score = 100;
     const feedback = [];
 
     if (!angles || !landmarks) return { score: 0, feedback: ['Cannot detect pose'] };
 
-    // Check knee symmetry (both knees should be similar)
+    // Check knee symmetry
     const kneeDifference = Math.abs(angles.leftKnee - angles.rightKnee);
     if (kneeDifference > 15) {
       score -= 20;
       feedback.push('Keep both knees aligned');
     }
 
-    // Check squat depth (good depth = knee angle < 90°)
+    // Check squat depth
     const avgKneeAngle = (angles.leftKnee + angles.rightKnee) / 2;
     if (avgKneeAngle > 110) {
       score -= 15;
