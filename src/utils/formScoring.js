@@ -38,9 +38,16 @@ export class FormQualityScorer {
       feedback.push('Keep knees over toes');
     }
 
+    // Additional check for back posture during squat
+    const backPosture = this.checkBackPosture(landmarks);
+    if (!backPosture.good) {
+      score -= 15;
+      feedback.push('Maintain neutral spine position');
+    }
+
     return {
       score: Math.max(0, score),
-      feedback: feedback.length > 0 ? feedback : ['Good form!']
+      feedback: feedback.length > 0 ? feedback : ['Good form']
     };
   }
 
@@ -119,6 +126,55 @@ export class FormQualityScorer {
       return { good: alignmentRatio > 0.3 && alignmentRatio < 3.0 };
     } catch (error) {
       return { good: true }; // If we can't check, assume it's okay
+    }
+  }
+
+  // Check back posture during squats
+  checkBackPosture(landmarks) {
+    try {
+      const shoulders = [(landmarks[11].y + landmarks[12].y) / 2];
+      const hips = [(landmarks[23].y + landmarks[24].y) / 2];
+      const knees = [(landmarks[25].y + landmarks[26].y) / 2];
+      
+      // Calculate angles to determine if back is too curved or too straight
+      const backAngle = this.calculateAngleBetweenPoints(shoulders, hips, knees);
+      
+      // Good back posture during squat maintains a relatively neutral spine
+      const goodPosture = backAngle > 160 && backAngle < 185;
+      
+      return { 
+        good: goodPosture,
+        angle: backAngle 
+      };
+    } catch (error) {
+      return { good: true };
+    }
+  }
+  
+  // Helper method to calculate angle between three points
+  calculateAngleBetweenPoints(p1, p2, p3) {
+    try {
+      // Calculate vectors
+      const v1 = {
+        x: p1[0] - p2[0],
+        y: p1[1] - p2[1]
+      };
+      
+      const v2 = {
+        x: p3[0] - p2[0],
+        y: p3[1] - p2[1]
+      };
+      
+      // Calculate angle in degrees
+      const dotProduct = v1.x * v2.x + v1.y * v2.y;
+      const v1Magnitude = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+      const v2Magnitude = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+      
+      const angle = Math.acos(dotProduct / (v1Magnitude * v2Magnitude)) * (180 / Math.PI);
+      
+      return angle;
+    } catch (error) {
+      return 180; // Default to straight angle if calculation fails
     }
   }
 }
