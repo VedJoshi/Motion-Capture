@@ -1,9 +1,4 @@
-/**
- * Moving average filter implementation for pose data smoothing.
- * Reduces noise in angle measurements and provides more stable readings.
- */
-
-// Moving average filter to smooth noisy angle data
+// Applies moving average filter to reduce noise in pose detection data
 export class MovingAverage {
   constructor(windowSize = 5) {
     this.windowSize = windowSize;

@@ -1,9 +1,6 @@
 import React from 'react';
 
-/**
- * Navigation bar component with view switching functionality.
- * Renders buttons for Dashboard, Exercises, Reports, and Profile views.
- */
+// Main navigation menu with view sections
 function Navigation({currentView, onChangeView}) {
 
     const handleNavClick = (viewName) => {

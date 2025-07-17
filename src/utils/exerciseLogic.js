@@ -1,11 +1,6 @@
-/**
- * Exercise-specific logic for analyzing plank form.
- * Tracks hold time, stability, and proper body alignment.
- */
-
 import { calculateAngle } from './angleCalculation';
 
-// Plank-specific analysis
+// Evaluates plank hold time and position stability
 export class PlankAnalyzer {
     constructor() {
         this.startTime = null;

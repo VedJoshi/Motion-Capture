@@ -1,9 +1,6 @@
 /**
- * Analyzes exercise form and generates quality scores.
- * Provides feedback for squat and push-up form based on joint angles and body positioning.
+ * Evaluates exercise form quality and provides feedback based on pose detection data.
  */
-
-// Calculate form quality score for different exercises
 export class FormQualityScorer {
   
   // Score squat form (0-100)

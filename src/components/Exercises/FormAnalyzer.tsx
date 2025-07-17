@@ -23,6 +23,7 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
   const [feedback, setFeedback] = useState([]);
   const [plankHoldTime, setPlankHoldTime] = useState(0);
   const [plankStability, setPlankStability] = useState(0);
+  const [lastRepAngles, setLastRepAngles] = useState(null);
   
   const smootherRef = useRef(new SmoothedAngles());
   const scorerRef = useRef(new FormQualityScorer());
@@ -100,20 +101,23 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
         analyzeAdvancedPushup(smoothed);
         break;
       case 'lunges':
-        analyzeLunges();
+        analyzeLunges(smoothed);
         break;
       case 'bicepCurls':
-        analyzeBicepCurls();
+        analyzeBicepCurls(smoothed);
         break;
       case 'shoulderPress':
-        analyzeShoulderPress();
+        analyzeShoulderPress(smoothed);
         break;
       case 'situps':
-        analyzeSitups();
+        analyzeSitups(smoothed);
+        break;
+      case 'deadlifts':
+        analyzeDeadlifts(smoothed);
         break;
       default:
-        setFeedback(['Exercise analysis not yet implemented']);
-        setFormScore(50);
+        // Generic analysis for other exercises
+        analyzeGenericExercise(smoothed);
         break;
     }
   };
@@ -225,10 +229,11 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     }
   };
 
-  const analyzeLunges = () => {
+  const analyzeLunges = (angles) => {
     const lungeResult = lungeAnalyzerRef.current.analyze(poseResults.poseLandmarks);
     
-    setFormScore(lungeResult.balance + lungeResult.depth);
+    const combinedScore = Math.min(100, lungeResult.balance + lungeResult.depth);
+    setFormScore(combinedScore);
     setFeedback(lungeResult.feedback);
 
     if (lungeResult.isLunge && lungeResult.depth > 70) {
@@ -237,15 +242,18 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
         setRepCount(prev => prev + 1);
         
         if (onRepDetected) {
-          onRepDetected('lunge', repCount + 1, lungeResult.balance + lungeResult.depth);
+          onRepDetected('lunge', repCount + 1, combinedScore);
         }
+        
+        // Reset to ready after short delay
+        setTimeout(() => {
+          setExercisePhase('ready');
+        }, 1000);
       }
-    } else {
-      setExercisePhase('ready');
     }
   };
 
-  const analyzeBicepCurls = () => {
+  const analyzeBicepCurls = (angles) => {
     const curlResult = bicepCurlAnalyzerRef.current.analyze(poseResults.poseLandmarks);
     
     setFormScore(curlResult.shoulderStability);
@@ -253,10 +261,10 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
 
     const avgAngle = (curlResult.leftArmAngle + curlResult.rightArmAngle) / 2;
     
-    if (exercisePhase === 'ready' && avgAngle > 120) {
+    if (exercisePhase === 'ready' && avgAngle < 100) {
       setExercisePhase('up');
     }
-    else if (exercisePhase === 'up' && avgAngle < 60) {
+    else if (exercisePhase === 'up' && avgAngle > 140) {
       setExercisePhase('ready');
       setRepCount(prev => prev + 1);
       
@@ -266,7 +274,7 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     }
   };
 
-  const analyzeShoulderPress = () => {
+  const analyzeShoulderPress = (angles) => {
     const pressResult = shoulderPressAnalyzerRef.current.analyze(poseResults.poseLandmarks);
     
     setFormScore(pressResult.coreStability);
@@ -287,13 +295,13 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     }
   };
 
-  const analyzeSitups = () => {
+  const analyzeSitups = (angles) => {
     const situpResult = situpAnalyzerRef.current.analyze(poseResults.poseLandmarks);
     
     setFormScore(situpResult.neckStrain);
     setFeedback(situpResult.feedback);
 
-    if (exercisePhase === 'ready' && situpResult.isSittingUp) {
+    if (exercisePhase === 'ready' && situpResult.isSittingUp && situpResult.torsoAngle < 60) {
       setExercisePhase('up');
       setRepCount(prev => prev + 1);
       
@@ -306,6 +314,92 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     }
   };
 
+  const analyzeDeadlifts = (angles) => {
+    // Basic deadlift analysis using hip and knee angles
+    const avgHipAngle = (angles.leftHip + angles.rightHip) / 2;
+    const avgKneeAngle = (angles.leftKnee + angles.rightKnee) / 2;
+    
+    let score = 100;
+    const feedback: string[] = [];
+    
+    // Check hip hinge (primary movement should be at hips)
+    if (avgHipAngle > 140) {
+      score -= 20;
+      feedback.push('Hinge more at the hips');
+    }
+    
+    // Check knee tracking
+    if (Math.abs(angles.leftKnee - angles.rightKnee) > 15) {
+      score -= 15;
+      feedback.push('Keep knees aligned');
+    }
+    
+    setFormScore(Math.max(0, score));
+    setFeedback(feedback.length > 0 ? feedback : ['Good deadlift form!']);
+    
+    // Simple rep counting based on hip angle
+    if (exercisePhase === 'ready' && avgHipAngle < 110) {
+      setExercisePhase('down');
+    }
+    else if (exercisePhase === 'down' && avgHipAngle > 150) {
+      setExercisePhase('ready');
+      setRepCount(prev => prev + 1);
+      
+      if (onRepDetected) {
+        onRepDetected('deadlift', repCount + 1, score);
+      }
+    }
+  };
+
+  const analyzeGenericExercise = (angles) => {
+    // Generic analysis for exercises without specific logic
+    const avgKneeAngle = (angles.leftKnee + angles.rightKnee) / 2;
+    const avgElbowAngle = (angles.leftElbow + angles.rightElbow) / 2;
+    
+    let score = 80; // Base score for generic exercises
+    const feedback = ['Exercise detected - maintain good form'];
+    
+    // Basic symmetry check
+    if (Math.abs(angles.leftKnee - angles.rightKnee) > 20) {
+      score -= 10;
+      feedback.push('Keep both sides balanced');
+    }
+    
+    if (Math.abs(angles.leftElbow - angles.rightElbow) > 25) {
+      score -= 10;
+      feedback.push('Keep arm movements synchronized');
+    }
+    
+    setFormScore(Math.max(0, score));
+    setFeedback(feedback);
+    
+    // Simple rep detection based on significant angle changes
+    if (!lastRepAngles) {
+      setLastRepAngles(angles);
+      return;
+    }
+    
+    const kneeChange = Math.abs(avgKneeAngle - ((lastRepAngles.leftKnee + lastRepAngles.rightKnee) / 2));
+    const elbowChange = Math.abs(avgElbowAngle - ((lastRepAngles.leftElbow + lastRepAngles.rightElbow) / 2));
+    
+    if (kneeChange > 30 || elbowChange > 30) {
+      if (exercisePhase === 'ready') {
+        setExercisePhase('active');
+        setRepCount(prev => prev + 1);
+        
+        if (onRepDetected) {
+          onRepDetected(selectedExercise.id, repCount + 1, score);
+        }
+        
+        // Reset after delay
+        setTimeout(() => {
+          setExercisePhase('ready');
+          setLastRepAngles(angles);
+        }, 1500);
+      }
+    }
+  };
+
   const resetAnalysis = () => {
     setRepCount(0);
     setPlankHoldTime(0);
@@ -313,6 +407,7 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     setExercisePhase('ready');
     setFormScore(0);
     setFeedback([]);
+    setLastRepAngles(null);
     smootherRef.current.reset();
     plankAnalyzerRef.current.reset();
     squatAnalyzerRef.current.reset();

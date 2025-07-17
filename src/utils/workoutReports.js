@@ -1,8 +1,6 @@
 import { dbHelpers } from '../config/supabase'
 
-/**
- * Helper function to save workout report to database
- */
+// Stores workout session data in the database
 export const saveWorkoutReport = async (userId, workoutData) => {
   try {
     const reportData = {

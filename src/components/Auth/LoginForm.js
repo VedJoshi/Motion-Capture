@@ -19,10 +19,35 @@ function LoginForm({ onToggleMode }) {
       return
     }
 
-    const { error } = await signIn(email, password)
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address')
+      setIsLoading(false)
+      return
+    }
+
+    const { error: signInError } = await signIn(email, password)
     
-    if (error) {
-      setError(error.message)
+    if (signInError) {
+      // Provide more specific error messages
+      let errorMessage = 'An error occurred during sign in'
+      
+      if (signInError.message.includes('Invalid login credentials')) {
+        errorMessage = 'Invalid email or password. Please check your credentials and try again.'
+      } else if (signInError.message.includes('Email not confirmed')) {
+        errorMessage = 'Please check your email and click the confirmation link before signing in.'
+      } else if (signInError.message.includes('Too many requests')) {
+        errorMessage = 'Too many sign in attempts. Please wait a moment and try again.'
+      } else if (signInError.message.includes('User not found')) {
+        errorMessage = 'No account found with this email address. Please check your email or create a new account.'
+      } else if (signInError.message.includes('network')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.'
+      } else {
+        errorMessage = signInError.message
+      }
+      
+      setError(errorMessage)
     }
     
     setIsLoading(false)
@@ -72,6 +97,7 @@ function LoginForm({ onToggleMode }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
+            disabled={isLoading}
             style={{
               width: '100%',
               padding: '0.875rem',
@@ -80,7 +106,8 @@ function LoginForm({ onToggleMode }) {
               fontSize: '0.95rem',
               boxSizing: 'border-box',
               transition: 'border-color 0.2s',
-              outline: 'none'
+              outline: 'none',
+              opacity: isLoading ? 0.7 : 1
             }}
             onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
             onBlur={(e) => e.target.style.borderColor = 'var(--neutral-300)'}
@@ -102,6 +129,7 @@ function LoginForm({ onToggleMode }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
+            disabled={isLoading}
             style={{
               width: '100%',
               padding: '0.875rem',
@@ -110,7 +138,8 @@ function LoginForm({ onToggleMode }) {
               fontSize: '0.95rem',
               boxSizing: 'border-box',
               transition: 'border-color 0.2s',
-              outline: 'none'
+              outline: 'none',
+              opacity: isLoading ? 0.7 : 1
             }}
             onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
             onBlur={(e) => e.target.style.borderColor = 'var(--neutral-300)'}
@@ -125,9 +154,13 @@ function LoginForm({ onToggleMode }) {
             border: '1px solid #fecaca',
             borderRadius: 'var(--border-radius-md)',
             color: '#dc2626',
-            fontSize: '0.875rem'
+            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.5rem'
           }}>
-            {error}
+            <span style={{ marginTop: '0.1rem' }}>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
 
@@ -147,10 +180,21 @@ function LoginForm({ onToggleMode }) {
             fontWeight: '600',
             cursor: isLoading ? 'not-allowed' : 'pointer',
             transition: 'all 0.2s',
-            boxShadow: 'var(--shadow-sm)'
+            boxShadow: 'var(--shadow-sm)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem'
           }}
         >
-          {isLoading ? 'Signing in...' : 'Sign In'}
+          {isLoading ? (
+            <>
+              <span style={{ animation: 'spin 1s linear infinite' }}>⏳</span>
+              Signing in...
+            </>
+          ) : (
+            '🔐 Sign In'
+          )}
         </button>
       </form>
 
@@ -168,20 +212,29 @@ function LoginForm({ onToggleMode }) {
           Don't have an account?{' '}
           <button
             onClick={onToggleMode}
+            disabled={isLoading}
             style={{
               background: 'none',
               border: 'none',
               color: 'var(--primary-color)',
               fontWeight: '500',
-              cursor: 'pointer',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
               textDecoration: 'underline',
-              fontSize: '0.9rem'
+              fontSize: '0.9rem',
+              opacity: isLoading ? 0.7 : 1
             }}
           >
             Sign up here
           </button>
         </p>
       </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }
