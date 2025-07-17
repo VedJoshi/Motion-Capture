@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getBodyAngles, areAnglesValid } from '../../utils/angleCalculation';
 import { SmoothedAngles } from '../../utils/dataSmoothing';
 import { FormQualityScorer } from '../../utils/formScoring';
-import { PlankAnalyzer, AdvancedSquatAnalyzer, AdvancedPushupAnalyzer } from '../../utils/exerciseLogic';
+import { 
+  PlankAnalyzer, 
+  AdvancedSquatAnalyzer, 
+  AdvancedPushupAnalyzer,
+  LungeAnalyzer,
+  BicepCurlAnalyzer,
+  ShoulderPressAnalyzer,
+  SitupAnalyzer
+} from '../../utils/exerciseLogic';
 import { getExercise } from '../../data/exercises';
 import FeedbackDisplay from './FeedbackDisplay.tsx';
 
@@ -21,6 +29,10 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
   const plankAnalyzerRef = useRef(new PlankAnalyzer());
   const squatAnalyzerRef = useRef(new AdvancedSquatAnalyzer());
   const pushupAnalyzerRef = useRef(new AdvancedPushupAnalyzer());
+  const lungeAnalyzerRef = useRef(new LungeAnalyzer());
+  const bicepCurlAnalyzerRef = useRef(new BicepCurlAnalyzer());
+  const shoulderPressAnalyzerRef = useRef(new ShoulderPressAnalyzer());
+  const situpAnalyzerRef = useRef(new SitupAnalyzer());
 
   useEffect(() => {
     if (poseResults?.poseLandmarks) {
@@ -79,10 +91,30 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     const smoothed = smootherRef.current.smooth(rawAngles);
     setSmoothedAngles(smoothed);
 
-    if (selectedExercise.id === 'squats') {
-      analyzeAdvancedSquat(smoothed);
-    } else if (selectedExercise.id === 'pushups') {
-      analyzeAdvancedPushup(smoothed);
+    // Route to specific exercise analysis
+    switch (selectedExercise.id) {
+      case 'squats':
+        analyzeAdvancedSquat(smoothed);
+        break;
+      case 'pushups':
+        analyzeAdvancedPushup(smoothed);
+        break;
+      case 'lunges':
+        analyzeLunges();
+        break;
+      case 'bicepCurls':
+        analyzeBicepCurls();
+        break;
+      case 'shoulderPress':
+        analyzeShoulderPress();
+        break;
+      case 'situps':
+        analyzeSitups();
+        break;
+      default:
+        setFeedback(['Exercise analysis not yet implemented']);
+        setFormScore(50);
+        break;
     }
   };
 
@@ -193,6 +225,87 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     }
   };
 
+  const analyzeLunges = () => {
+    const lungeResult = lungeAnalyzerRef.current.analyze(poseResults.poseLandmarks);
+    
+    setFormScore(lungeResult.balance + lungeResult.depth);
+    setFeedback(lungeResult.feedback);
+
+    if (lungeResult.isLunge && lungeResult.depth > 70) {
+      if (exercisePhase === 'ready') {
+        setExercisePhase('lunge');
+        setRepCount(prev => prev + 1);
+        
+        if (onRepDetected) {
+          onRepDetected('lunge', repCount + 1, lungeResult.balance + lungeResult.depth);
+        }
+      }
+    } else {
+      setExercisePhase('ready');
+    }
+  };
+
+  const analyzeBicepCurls = () => {
+    const curlResult = bicepCurlAnalyzerRef.current.analyze(poseResults.poseLandmarks);
+    
+    setFormScore(curlResult.shoulderStability);
+    setFeedback(curlResult.feedback);
+
+    const avgAngle = (curlResult.leftArmAngle + curlResult.rightArmAngle) / 2;
+    
+    if (exercisePhase === 'ready' && avgAngle > 120) {
+      setExercisePhase('up');
+    }
+    else if (exercisePhase === 'up' && avgAngle < 60) {
+      setExercisePhase('ready');
+      setRepCount(prev => prev + 1);
+      
+      if (onRepDetected) {
+        onRepDetected('bicepCurl', repCount + 1, curlResult.shoulderStability);
+      }
+    }
+  };
+
+  const analyzeShoulderPress = () => {
+    const pressResult = shoulderPressAnalyzerRef.current.analyze(poseResults.poseLandmarks);
+    
+    setFormScore(pressResult.coreStability);
+    setFeedback(pressResult.feedback);
+
+    const avgAngle = (pressResult.leftShoulderAngle + pressResult.rightShoulderAngle) / 2;
+    
+    if (exercisePhase === 'ready' && avgAngle > 140) {
+      setExercisePhase('up');
+      setRepCount(prev => prev + 1);
+      
+      if (onRepDetected) {
+        onRepDetected('shoulderPress', repCount + 1, pressResult.coreStability);
+      }
+    }
+    else if (exercisePhase === 'up' && avgAngle < 100) {
+      setExercisePhase('ready');
+    }
+  };
+
+  const analyzeSitups = () => {
+    const situpResult = situpAnalyzerRef.current.analyze(poseResults.poseLandmarks);
+    
+    setFormScore(situpResult.neckStrain);
+    setFeedback(situpResult.feedback);
+
+    if (exercisePhase === 'ready' && situpResult.isSittingUp) {
+      setExercisePhase('up');
+      setRepCount(prev => prev + 1);
+      
+      if (onRepDetected) {
+        onRepDetected('situp', repCount + 1, situpResult.neckStrain);
+      }
+    }
+    else if (exercisePhase === 'up' && !situpResult.isSittingUp) {
+      setExercisePhase('ready');
+    }
+  };
+
   const resetAnalysis = () => {
     setRepCount(0);
     setPlankHoldTime(0);
@@ -204,6 +317,10 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     plankAnalyzerRef.current.reset();
     squatAnalyzerRef.current.reset();
     pushupAnalyzerRef.current.reset();
+    lungeAnalyzerRef.current.reset();
+    bicepCurlAnalyzerRef.current.reset();
+    shoulderPressAnalyzerRef.current.reset();
+    situpAnalyzerRef.current.reset();
   };
 
   const isTimeBasedExercise = selectedExercise && getExercise(selectedExercise.id)?.type === 'time';
