@@ -25,9 +25,28 @@ function CameraControls({ onStartCamera, onStopCamera, isCameraActive }) {
       display: 'flex', 
       gap: '1rem', 
       justifyContent: 'center',
+      alignItems: 'center',
       marginBottom: '1.5rem',
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      width: '100%',
+      maxWidth: '1200px'
     }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        marginRight: 'auto',
+      }}>
+        <img 
+          src="/fitformlogo.png" 
+          alt="FitForm Logo" 
+          style={{
+            height: '40px',
+            display: { xs: 'none', sm: 'block' }
+          }}
+        />
+      </div>
+      
       {!isCameraActive ? (
         <button 
           onClick={onStartCamera}

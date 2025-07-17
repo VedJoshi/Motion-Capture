@@ -47,7 +47,8 @@ function PoseOverlay({ poseResults, videoWidth, videoHeight }) {
         width: '100%',
         height: '100%',
         pointerEvents: 'none',
-        zIndex: 1
+        zIndex: 1,
+        objectFit: 'cover'
       }}
     />
   );
