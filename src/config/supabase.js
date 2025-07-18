@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { getSiteUrl } from '../utils/urls'
+import { getSiteUrl } from '../utils/urls.ts'
 
 // Replace these with your actual Supabase project URL and anon key
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'your-supabase-url'
