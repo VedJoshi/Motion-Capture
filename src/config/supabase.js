@@ -1,10 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
+import { getSiteUrl } from '../utils/urls'
 
 // Replace these with your actual Supabase project URL and anon key
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'your-supabase-url'
 const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'your-supabase-anon-key'
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
+  }
+})
 
 // Auth helper functions
 export const authHelpers = {
@@ -14,7 +22,8 @@ export const authHelpers = {
       email,
       password,
       options: {
-        data: userData
+        data: userData,
+        emailRedirectTo: getSiteUrl()
       }
     })
     return { data, error }
@@ -45,6 +54,17 @@ export const authHelpers = {
   getUser: async () => {
     const { data: { user }, error } = await supabase.auth.getUser()
     return { user, error }
+  },
+
+  resendConfirmation: async (email) => {
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: getSiteUrl()
+      }
+    })
+    return { data, error }
   }
 }
 

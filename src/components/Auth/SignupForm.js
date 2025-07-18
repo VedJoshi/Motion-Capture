@@ -99,7 +99,7 @@ function SignupForm({ onToggleMode }) {
       
       setError(errorMessage)
     } else {
-      setMessage('🎉 Account created successfully! Please check your email for a verification link. You\'ll need to verify your email before signing in.')
+      setMessage('🎉 Account created successfully! Please check your email for a verification link. You\'ll need to verify your email before signing in. The confirmation link will redirect you back to this site.')
       
       // Clear form after successful signup
       setFormData({
