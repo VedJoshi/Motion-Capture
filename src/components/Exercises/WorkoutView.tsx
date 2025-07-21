@@ -141,318 +141,151 @@ function WorkoutView({ selectedExercise, onReset }) {
     <div className="workout-container">
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)',
-        color: 'white',
-        padding: 'clamp(1.5rem, 3vw, 2rem)',
-        borderRadius: 'var(--border-radius-xl)',
+        background: 'var(--white)',
+        color: 'var(--grey-700)',
+        padding: '2rem',
+        borderBottom: '1px solid var(--grey-200)',
         marginBottom: '2rem',
-        textAlign: 'center',
-        boxShadow: 'var(--shadow-lg)'
+        textAlign: 'center'
       }}>
-        <h2 className="responsive-text-3xl" style={{ 
+        <h2 style={{ 
           margin: '0 0 1rem 0', 
-          fontWeight: '700'
-        }}>💪 Workout Session</h2>
-        <div className="responsive-text-xl" style={{ 
-          opacity: 0.9,
-          marginBottom: '0.5rem'
+          fontWeight: '700',
+          color: 'var(--grey-700)'
+        }}>Workout Session</h2>
+        <div style={{ 
+          fontSize: '1.125rem',
+          fontWeight: '500'
         }}>
-          <strong>Exercise:</strong> {selectedExercise ? selectedExercise.name : 'None Selected'}
+          {selectedExercise ? selectedExercise.name : 'Select an Exercise'}
         </div>
-        {selectedExercise && (
-          <div style={{ 
-            fontSize: 'clamp(0.875rem, 1.5vw, 1rem)', 
-            opacity: 0.8
-          }}>
-            {selectedExercise.description} • {selectedExercise.type === 'time' ? 'Time-based' : 'Rep-based'}
-          </div>
-        )}
       </div>
 
       {/* Error/Success Messages */}
       {saveError && (
         <div style={{
-          background: '#fee2e2',
-          color: '#dc2626',
-          padding: '1rem 1.5rem',
-          borderRadius: 'var(--border-radius-lg)',
-          marginBottom: '2rem',
-          border: '1px solid #fecaca',
-          fontSize: '0.95rem'
+          background: 'var(--grey-100)',
+          color: 'var(--grey-700)',
+          padding: '1rem',
+          border: '1px solid var(--grey-200)',
+          marginBottom: '1rem',
+          borderRadius: 'var(--border-radius)'
         }}>
-          ❌ {saveError}
+          {saveError}
         </div>
       )}
 
       {saveSuccess && (
         <div style={{
-          background: '#dcfce7',
-          color: '#166534',
-          padding: '1rem 1.5rem',
-          borderRadius: 'var(--border-radius-lg)',
-          marginBottom: '2rem',
-          border: '1px solid #bbf7d0',
-          fontSize: '0.95rem'
+          background: 'var(--grey-100)',
+          color: 'var(--grey-700)',
+          padding: '1rem',
+          border: '1px solid var(--grey-200)',
+          marginBottom: '1rem',
+          borderRadius: 'var(--border-radius)'
         }}>
-          ✅ Workout saved successfully! Check your reports to see the details.
+          Workout saved successfully
         </div>
       )}
 
-      {/* Main Content - Responsive Layout */}
       <div className="workout-content-grid">
-        
-        {/* Left Column - Camera (takes remaining space) */}
-        <div className="workout-camera-section">
+        {/* Camera View */}
+        <div style={{
+          border: '1px solid var(--grey-200)',
+          borderRadius: 'var(--border-radius)',
+          overflow: 'hidden'
+        }}>
           <CameraView onPoseResults={handlePoseResults} />
         </div>
 
-        {/* Right Column - Controls and Status */}
-        <div className="workout-controls-section">
-          {/* Tracking Controls */}
+        {/* Controls Section */}
+        <div style={{
+          background: 'var(--white)',
+          border: '1px solid var(--grey-200)',
+          padding: '1.5rem',
+          borderRadius: 'var(--border-radius)'
+        }}>
+          <h3 style={{ 
+            margin: '0 0 1.5rem 0',
+            fontWeight: '500',
+            color: 'var(--grey-700)'
+          }}>Controls</h3>
+
+          {/* Status Display */}
           <div style={{
-            background: 'var(--surface-white)',
-            border: '1px solid var(--neutral-200)',
-            borderRadius: 'var(--border-radius-xl)',
-            padding: '2rem',
-            boxShadow: 'var(--shadow-sm)'
+            padding: '0.5rem',
+            background: 'var(--grey-100)',
+            color: 'var(--grey-700)',
+            borderRadius: 'var(--border-radius)',
+            marginBottom: '1rem',
+            textAlign: 'center',
+            fontWeight: '500'
           }}>
-            <h3 style={{ 
-              margin: '0 0 1.5rem 0', 
-              color: 'var(--neutral-700)',
-              fontSize: '1.25rem',
-              fontWeight: '600'
-            }}>🎯 Workout Controls</h3>
-            
-            {/* Status Display */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{
-                display: 'inline-block',
-                padding: '0.5rem 1rem',
-                borderRadius: '9999px',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                background: isTracking ? '#dcfce7' : '#fee2e2',
-                color: isTracking ? '#166534' : '#dc2626',
-                border: isTracking ? '1px solid #bbf7d0' : '1px solid #fecaca'
-              }}>
-                {isTracking ? '🟢 TRACKING ACTIVE' : '🔴 TRACKING STOPPED'}
-              </div>
-            </div>
-
-            {/* Current Stats */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1fr', 
-              gap: '1rem',
-              marginBottom: '1.5rem'
-            }}>
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '1rem', 
-                background: 'var(--neutral-50)', 
-                borderRadius: 'var(--border-radius-lg)',
-                border: '1px solid var(--neutral-200)'
-              }}>
-                <div style={{ 
-                  fontSize: '1.5rem', 
-                  fontWeight: '700', 
-                  color: 'var(--primary-color)',
-                  marginBottom: '0.25rem'
-                }}>
-                  {selectedExercise?.type === 'time' ? `${totalReps}s` : totalReps}
-                </div>
-                <div style={{ 
-                  fontSize: '0.75rem', 
-                  color: 'var(--neutral-600)',
-                  fontWeight: '500',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
-                }}>
-                  {selectedExercise?.type === 'time' ? 'TIME' : 'REPS'}
-                </div>
-              </div>
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '1rem', 
-                background: 'var(--neutral-50)', 
-                borderRadius: 'var(--border-radius-lg)',
-                border: '1px solid var(--neutral-200)'
-              }}>
-                <div style={{ 
-                  fontSize: '1.5rem', 
-                  fontWeight: '700', 
-                  color: 'var(--success-color)',
-                  marginBottom: '0.25rem'
-                }}>
-                  {formScores.length > 0 ? Math.round(formScores.reduce((a,b) => a + b, 0) / formScores.length) : 0}%
-                </div>
-                <div style={{ 
-                  fontSize: '0.75rem', 
-                  color: 'var(--neutral-600)',
-                  fontWeight: '500',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
-                }}>
-                  AVG FORM
-                </div>
-              </div>
-            </div>
-
-            {/* Control Buttons */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {!isTracking ? (
-                <button
-                  onClick={startTracking}
-                  disabled={!selectedExercise || isSaving}
-                  style={{
-                    width: '100%',
-                    padding: '1rem',
-                    background: (selectedExercise && !isSaving) 
-                      ? 'linear-gradient(135deg, var(--success-color) 0%, var(--accent-color) 100%)' 
-                      : 'var(--neutral-400)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--border-radius-lg)',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: (selectedExercise && !isSaving) ? 'pointer' : 'not-allowed',
-                    transition: 'all 0.2s',
-                    boxShadow: 'var(--shadow-sm)'
-                  }}
-                >
-                  {isSaving ? '💾 Saving...' : '▶️ Start Tracking'}
-                </button>
-              ) : (
-                <button
-                  onClick={stopTracking}
-                  disabled={isSaving}
-                  style={{
-                    width: '100%',
-                    padding: '1rem',
-                    background: isSaving 
-                      ? 'var(--neutral-400)' 
-                      : 'linear-gradient(135deg, var(--danger-color) 0%, var(--warning-color) 100%)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--border-radius-lg)',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: isSaving ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    boxShadow: 'var(--shadow-sm)'
-                  }}
-                >
-                  {isSaving ? '💾 Saving...' : '⏹️ Stop & Save'}
-                </button>
-              )}
-
-              {/* Reset Button */}
-              <button
-                onClick={() => {
-                  resetWorkout();
-                  onReset();
-                }}
-                disabled={isSaving}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  backgroundColor: isSaving ? 'var(--neutral-300)' : 'var(--neutral-500)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 'var(--border-radius-lg)',
-                  fontSize: '0.875rem',
-                  fontWeight: '500',
-                  cursor: isSaving ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                🔄 Reset & Change Exercise
-              </button>
-            </div>
+            {isTracking ? 'TRACKING ACTIVE' : 'TRACKING STOPPED'}
           </div>
 
-          {/* Workout Report */}
-          {workoutReport && (
-            <div style={{
-              background: 'linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%)',
-              color: 'white',
-              padding: '1.5rem',
-              borderRadius: 'var(--border-radius-xl)',
-              boxShadow: 'var(--shadow-lg)'
-            }}>
-              <h3 style={{ 
-                margin: '0 0 1rem 0',
-                fontSize: '1.125rem',
-                fontWeight: '600'
-              }}>📊 Workout Report</h3>
-              
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '1fr 1fr', 
-                gap: '1rem', 
-                fontSize: '0.875rem', 
-                marginBottom: '1rem'
-              }}>
-                <div><strong>Exercise:</strong> {workoutReport.exercise}</div>
-                <div><strong>Type:</strong> {workoutReport.exerciseType}</div>
-                {workoutReport.exerciseType === 'time' ? (
-                  <div><strong>Duration:</strong> {workoutReport.duration}s</div>
-                ) : (
-                  <>
-                    <div><strong>Total Reps:</strong> {workoutReport.totalReps}</div>
-                    <div><strong>Duration:</strong> {Math.floor(workoutReport.duration / 60)}m {workoutReport.duration % 60}s</div>
-                  </>
-                )}
-                <div><strong>Avg Form:</strong> {workoutReport.avgFormScore}%</div>
-                <div><strong>Best Score:</strong> {workoutReport.bestRepScore}%</div>
-              </div>
-
-              <div style={{
-                padding: '1rem',
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: 'var(--border-radius-lg)',
-                marginBottom: '1rem'
-              }}>
-                <div style={{ 
-                  fontSize: '1rem', 
-                  fontWeight: '600', 
-                  marginBottom: '0.5rem'
-                }}>
-                  Overall Score: <span style={{ color: getScoreColor(workoutReport.overallScore) }}>
-                    {workoutReport.overallScore}%
-                  </span>
-                </div>
-                <div style={{ 
-                  fontSize: '0.875rem', 
-                  lineHeight: '1.4',
-                  opacity: 0.9
-                }}>
-                  {workoutReport.feedback}
-                </div>
-              </div>
-
-              <div style={{ 
-                fontSize: '0.75rem', 
-                opacity: 0.8
-              }}>
-                Completed at {workoutReport.completedAt}
-              </div>
-              
-              {workoutReport.overallScore >= 80 && (
-                <div style={{ 
-                  marginTop: '0.75rem', 
+          {/* Control Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {!isTracking ? (
+              <button
+                onClick={startTracking}
+                disabled={!selectedExercise || isSaving}
+                style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
                   fontSize: '1rem',
-                  fontWeight: '500'
-                }}>
-                  🎉 Excellent performance! Keep it up!
-                </div>
-              )}
-            </div>
-          )}
+                  fontWeight: '500',
+                  opacity: (!selectedExercise || isSaving) ? 0.5 : 1
+                }}
+              >
+                {isSaving ? 'Saving...' : 'Start Tracking'}
+              </button>
+            ) : (
+              <button
+                onClick={stopTracking}
+                disabled={isSaving}
+                style={{
+                  padding: '0.75rem',
+                  background: 'var(--primary-color)',
+                  color: 'var(--white)',
+                  border: 'none',
+                  borderRadius: 'var(--border-radius)',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  opacity: isSaving ? 0.5 : 1
+                }}
+              >
+                {isSaving ? 'Saving...' : 'Stop & Save'}
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                resetWorkout();
+                onReset();
+              }}
+              disabled={isSaving}
+              style={{
+                padding: '0.75rem',
+                background: 'var(--white)',
+                color: 'var(--grey-700)',
+                border: '1px solid var(--grey-200)',
+                borderRadius: 'var(--border-radius)',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                opacity: isSaving ? 0.5 : 1
+              }}
+            >
+              Reset & Change Exercise
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Form Analyzer - Full Width */}
+      {/* Form Analyzer */}
       <div className="workout-form-analyzer">
         {selectedExercise && (
           <FormAnalyzer
@@ -461,11 +294,6 @@ function WorkoutView({ selectedExercise, onReset }) {
             onRepDetected={handleRepDetected}
           />
         )}
-      </div>
-      <div style={{ 
-        marginTop: '2rem',
-        width: '100%'
-      }}>
       </div>
     </div>
   );

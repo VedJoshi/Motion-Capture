@@ -6,7 +6,7 @@ import React from 'react';
 function CameraControls({ onStartCamera, onStopCamera, isCameraActive }) {
   const buttonBaseStyle = {
     padding: '0.875rem 2rem',
-    border: '1px solid transparent',
+    border: '2px solid transparent',
     borderRadius: 'var(--border-radius-lg)',
     fontSize: '0.95rem',
     fontWeight: '600',
@@ -17,43 +17,26 @@ function CameraControls({ onStartCamera, onStopCamera, isCameraActive }) {
     gap: '0.5rem',
     fontFamily: 'inherit',
     minWidth: '160px',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%)',
+    color: 'white',
+    boxShadow: 'var(--shadow-md)',
+    margin: '0 auto'
   };
 
   return (
     <div style={{ 
-      display: 'flex', 
-      gap: '1rem', 
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: '1.5rem',
-      flexWrap: 'wrap',
       width: '100%',
-      maxWidth: '1200px'
+      maxWidth: '800px',
+      margin: '1rem auto',
+      textAlign: 'center'
     }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        marginRight: 'auto',
-      }}>
-      </div>
-      
       {!isCameraActive ? (
         <button 
           onClick={onStartCamera}
-          style={{
-            ...buttonBaseStyle,
-            background: `linear-gradient(135deg, var(--success-color) 0%, var(--accent-light) 100%)`,
-            color: 'white',
-            boxShadow: 'var(--shadow-md)',
-            borderColor: 'var(--success-color)',
-            position: 'relative',
-            margin: '10px 50px',
-            display: 'block'
-          }}
+          style={buttonBaseStyle}
           onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-1px)';
+            e.target.style.transform = 'translateY(-2px)';
             e.target.style.boxShadow = 'var(--shadow-lg)';
           }}
           onMouseOut={(e) => {
@@ -68,13 +51,10 @@ function CameraControls({ onStartCamera, onStopCamera, isCameraActive }) {
           onClick={onStopCamera}
           style={{
             ...buttonBaseStyle,
-            background: `linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%)`,
-            color: 'white',
-            boxShadow: 'var(--shadow-md)',
-            borderColor: 'var(--danger-color)'
+            background: 'linear-gradient(135deg, var(--danger-color) 0%, var(--error-color) 100%)'
           }}
           onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-1px)';
+            e.target.style.transform = 'translateY(-2px)';
             e.target.style.boxShadow = 'var(--shadow-lg)';
           }}
           onMouseOut={(e) => {

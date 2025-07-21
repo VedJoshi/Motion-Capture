@@ -210,7 +210,9 @@ function Dashboard() {
             marginBottom: '0.75rem', 
             position: 'relative', 
             zIndex: 1 
-          }}>💪</div>
+          }}>
+            <span>✓</span>
+          </div>
           <div className="responsive-text-3xl" style={{ 
             fontWeight: 'bold', 
             marginBottom: '0.5rem', 
@@ -230,7 +232,7 @@ function Dashboard() {
 
         {/* Total Reps Card */}
         <div style={{
-          background: 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%)',
+          background: 'linear-gradient(135deg, var(--accent-dark) 0%, var(--accent-color) 100%)',
           padding: 'clamp(1.5rem, 3vw, 2rem)',
           borderRadius: 'var(--border-radius-xl)',
           color: 'white',
@@ -343,10 +345,11 @@ function Dashboard() {
       {recentWorkouts.length > 0 && (
         <div style={{
           background: 'var(--surface-white)',
+          color: 'var(--text-dark)',
+          border: '1px solid var(--border-light)',
           padding: 'clamp(1.5rem, 3vw, 2rem)',
           borderRadius: 'var(--border-radius-xl)',
           marginBottom: '2rem',
-          border: '1px solid var(--neutral-200)',
           boxShadow: 'var(--shadow-sm)'
         }}>
           <h3 className="responsive-text-2xl" style={{
@@ -433,10 +436,10 @@ function Dashboard() {
         }}></div>
         <h3 className="responsive-text-2xl" style={{ 
           margin: '0 0 1rem 0', 
-          color: 'var(--neutral-700)',
+          color: 'var(--text-dark)',
           fontWeight: '600'
         }}>
-          {userStats.totalWorkouts === 0 ? '🌟 Welcome to FitForm!' : '💪 Keep Going Strong!'}
+          {userStats.totalWorkouts === 0 ? 'Welcome to FitForm!' : 'Keep Going Strong!'}
         </h3>
         <p className="responsive-text-xl" style={{ 
           margin: '0 0 1.5rem 0', 

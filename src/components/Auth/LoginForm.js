@@ -169,13 +169,13 @@ function LoginForm({ onToggleMode }) {
           disabled={isLoading}
           style={{
             width: '100%',
-            padding: '0.875rem',
+            padding: '12px 24px',
             background: isLoading 
               ? 'var(--neutral-400)' 
-              : 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)',
-            color: 'white',
+              : 'var(--button-primary)',
+            color: 'var(--surface-white)',
             border: 'none',
-            borderRadius: 'var(--border-radius-md)',
+            borderRadius: '8px',
             fontSize: '1rem',
             fontWeight: '600',
             cursor: isLoading ? 'not-allowed' : 'pointer',
@@ -187,14 +187,7 @@ function LoginForm({ onToggleMode }) {
             gap: '0.5rem'
           }}
         >
-          {isLoading ? (
-            <>
-              <span style={{ animation: 'spin 1s linear infinite' }}>⏳</span>
-              Signing in...
-            </>
-          ) : (
-            '🔐 Sign In'
-          )}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 

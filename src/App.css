@@ -24,7 +24,7 @@
   --neutral-900: #111827;
   
   /* Surface Colors */
-  --surface-white: #ffffff;
+  --surface-white: #F8F9FA;
   --surface-light: #f9fafb;
   
   /* Border Radius */
@@ -177,8 +177,8 @@ button:not(nav button) {
   border-radius: var(--border-radius-md);
   font-weight: 500;
   padding: 0.75rem 1.25rem;
-  background: var(--primary-color);
-  color: white;
+  background: var(--button-primary);
+  color: var(--surface-white);
   border: none;
   cursor: pointer;
   box-shadow: var(--shadow-sm);

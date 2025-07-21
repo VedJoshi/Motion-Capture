@@ -3,50 +3,30 @@
 ## Color Palette
 
 ### Primary Colors
-- Primary: `#1a56db` - Main brand color
-- Primary Light: `#3b82f6` - Used for hover states
-- Primary Dark: `#1e429f` - Used for active states
-
-### Secondary Colors
-- Secondary: `#0ea5e9` - Used for complementary UI elements
-- Secondary Light: `#38bdf8` - Used for hover states
-
-### Accent Colors (Use Sparingly)
-- Accent: `#f97316` - Used for call-to-action elements
-- Accent Light: `#fdba74` - Used for hover states
-- Accent Dark: `#c2410c` - Used for active states
-
-### Functional Colors
-- Success: `#059669` - Used for success states
-- Warning: `#d97706` - Used for warning states
-- Danger: `#dc2626` - Used for error states
+- Primary: `#42A5F5` - Main blue accent
 
 ### Neutral Colors
-- White: `#ffffff` - Background for cards and components
-- Neutral 50: `#f8fafc` - Page background
-- Neutral 100-900: Various shades for text, borders, and other UI elements
+- White: `#FFFFFF` - Background for cards and components
+- Grey 100: `#F5F5F5` - Panel backgrounds
+- Grey 200: `#E0E0E0` - Borders and inactive elements
+- Grey 700: `#616161` - Text color
 
 ## Typography
 
 ### Font Family
 - Primary: 'Inter', sans-serif
-- Code: 'Source Code Pro', monospace
+
+### Font Weights
+- Regular: 400 - Body text
+- Medium: 500 - Subtitles
+- Bold: 700 - Headers
 
 ### Font Sizes
-- xs: 0.75rem (12px)
 - sm: 0.875rem (14px)
 - base: 1rem (16px)
 - lg: 1.125rem (18px)
 - xl: 1.25rem (20px)
 - 2xl: 1.5rem (24px)
-- 3xl: 1.875rem (30px)
-- 4xl: 2.25rem (36px)
-
-### Font Weights
-- Regular: 400
-- Medium: 500
-- Semi-bold: 600
-- Bold: 700
 
 ## Spacing System
 
@@ -81,6 +61,26 @@
 ### Buttons
 
 **Primary Button**
+- Background: #42A5F5
+- Text: White
+- Hover: Opacity 0.9
+- Disabled: Opacity 0.5
+
+**Secondary Button**
+- Background: White
+- Border: #E0E0E0
+- Text: #616161
+- Hover: Background #F5F5F5
+
+### Cards
+- Background: White
+- Border: 1px solid #E0E0E0
+- Border Radius: 4px
+
+### Navigation
+- Background: White
+- Active: #42A5F5
+- Hover: #F5F5F5
 - Background: Primary Color
 - Text: White
 - Hover: Primary Dark

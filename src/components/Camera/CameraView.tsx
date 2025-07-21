@@ -98,8 +98,17 @@ function CameraView({ onPoseResults }) {
       textAlign: 'center',
       maxWidth: '100%',
       width: '100%',
-      margin: '0 auto'
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
     }}>
+      <CameraControls 
+        onStartCamera={startCamera}
+        onStopCamera={stopCamera}
+        isCameraActive={isCameraActive}
+      />
+      
       {isLoading && (
         <div style={{ 
           padding: '1.25rem', 
@@ -128,19 +137,16 @@ function CameraView({ onPoseResults }) {
         </div>
       )}
 
-      <CameraControls 
-        onStartCamera={startCamera}
-        onStopCamera={stopCamera}
-        isCameraActive={isCameraActive}
-      />
-      
       <div 
         ref={containerRef}
         style={{ 
           position: 'relative', 
-          display: 'inline-block',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           width: '100%',
           maxWidth: '800px',
+          margin: '1rem auto',
           borderRadius: 'var(--border-radius-xl)',
           overflow: 'hidden',
           boxShadow: 'var(--shadow-xl)',
@@ -154,10 +160,11 @@ function CameraView({ onPoseResults }) {
           playsInline
           muted
           style={{
-            width: '100%',
+            width: 'auto',
             height: 'auto',
             display: error ? 'none' : 'block',
-            maxHeight: '60vh'
+            maxHeight: '60vh',
+            maxWidth: '100%'
           }}
         />
         
