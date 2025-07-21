@@ -177,7 +177,7 @@ function CameraView({ onPoseResults }) {
         )}
       </div>
       
-      {/* Professional debug information panel */}
+      {/* Debugging panel for pose detection stats */}
       <div style={{ 
           marginTop: '1.5rem', 
           fontSize: '0.875rem',

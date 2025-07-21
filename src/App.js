@@ -28,7 +28,7 @@ function AppContent() {
     setCurrentView('exercises');
   }
 
-  // Show loading spinner while checking auth state
+  // Display loading state while checking authentication
   if (loading) {
     return (
       <div style={{

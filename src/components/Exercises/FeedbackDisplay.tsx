@@ -150,3 +150,5 @@ function FeedbackDisplay({
 }
 
 export default FeedbackDisplay;
+
+// Map score ranges to color codes for visual feedback

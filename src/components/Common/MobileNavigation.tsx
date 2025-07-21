@@ -40,7 +40,7 @@ function MobileNavigation({ currentView, onChangeView }: MobileNavigationProps) 
   const handleNavClick = (viewName: string) => {
     onChangeView(viewName);
     
-    // Add haptic feedback for mobile devices
+    // Trigger device vibration for tactile feedback
     if ('vibrate' in navigator) {
       navigator.vibrate(10);
     }

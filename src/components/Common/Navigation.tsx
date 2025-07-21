@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Main navigation menu with view sections
+// Main app navigation with section links
 function Navigation({currentView, onChangeView}) {
 
     const handleNavClick = (viewName) => {

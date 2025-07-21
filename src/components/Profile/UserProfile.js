@@ -29,7 +29,8 @@ function UserProfile() {
       setLoading(true)
       const { data, error } = await dbHelpers.getUserProfile(user.id)
       
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      // Skip error if no user profile found
+      if (error && error.code !== 'PGRST116') {
         throw error
       }
       

@@ -154,5 +154,7 @@ function ToastManager({ toasts, onDismiss }: ToastManagerProps) {
   );
 }
 
+// Fade out delay for smooth transitions
+
 export { Toast, ToastManager };
 export default Toast;

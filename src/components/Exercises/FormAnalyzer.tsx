@@ -92,7 +92,7 @@ function FormAnalyzer({ poseResults, selectedExercise, onRepDetected }) {
     const smoothed = smootherRef.current.smooth(rawAngles);
     setSmoothedAngles(smoothed);
 
-    // Route to specific exercise analysis
+    // Delegate to specific exercise analysis logic
     switch (selectedExercise.id) {
       case 'squats':
         analyzeAdvancedSquat(smoothed);
