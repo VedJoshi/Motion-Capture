@@ -1,14 +1,14 @@
-# FitTracker AI - Motion Capture Fitness Platform
+# FitForm AI - Motion Capture Fitness Platform
 
 **AI-Powered Real-Time Exercise Form Analysis and Workout Tracking System**
 
 ## Project Overview
 
-FitTracker AI is a comprehensive fitness application that leverages computer vision and machine learning to provide real-time exercise form analysis, rep counting, and personalized workout feedback. Built with modern web technologies and advanced pose detection algorithms.
+FitForm AI is a comprehensive fitness application that leverages computer vision and machine learning to provide real-time exercise form analysis, rep counting, and personalized workout feedback. Built with modern web technologies and advanced pose detection algorithms.
 
 ## Resume Project Description
 
-**FitTracker AI - Motion Capture Fitness Platform**
+**FitForm AI - Motion Capture Fitness Platform**
 • Engineered a real-time fitness tracking system using React, MediaPipe, and Supabase for AI-powered exercise form analysis and rep counting
 • Implemented advanced computer vision pipeline achieving 90%+ accuracy in pose detection across 8 exercise types (squats, push-ups, planks, etc.)
 • Built intelligent form scoring algorithms with real-time feedback system, analyzing joint angles, movement symmetry, and exercise-specific biomechanics
@@ -89,7 +89,7 @@ Deployment: Web-based with camera permissions and real-time processing
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/fittracker-ai
+git clone https://github.com/yourusername/...git
 
 # Install dependencies
 npm install
@@ -134,7 +134,6 @@ CameraView: Video capture and pose visualization
 - **Detection Rate**: 95%+ in optimal conditions
 - **Form Accuracy**: 85-95% correlation with expert assessment
 - **Processing Speed**: 30fps real-time analysis
-- **User Engagement**: Average session time 15+ minutes
 
 ---
 
