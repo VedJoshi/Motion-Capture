@@ -9,11 +9,11 @@ FitForm AI is a comprehensive fitness application that leverages computer vision
 ## Project Description
 
 **FitForm AI - Motion Capture Fitness Platform**
-• Engineered a real-time fitness tracking system using React, MediaPipe, and Supabase for AI-powered exercise form analysis and rep counting
-• Implemented advanced computer vision pipeline achieving 90%+ accuracy in pose detection across 8 exercise types (squats, push-ups, planks, etc.)
-• Built intelligent form scoring algorithms with real-time feedback system, analyzing joint angles, movement symmetry, and exercise-specific biomechanics
-• Developed comprehensive workout analytics with detailed performance reports, progress tracking, and personalized improvement recommendations
-• Deployed full-stack solution with secure user authentication, cloud database integration, and responsive camera interface for seamless user experience
+- Engineered a real-time fitness tracking system using React, MediaPipe, and Supabase for AI-powered exercise form analysis and rep counting
+- Implemented advanced computer vision pipeline achieving 90%+ accuracy in pose detection across 8 exercise types (squats, push-ups, planks, etc.)
+- Built intelligent form scoring algorithms with real-time feedback system, analyzing joint angles, movement symmetry, and exercise-specific biomechanics
+- Developed comprehensive workout analytics with detailed performance reports, progress tracking, and personalized improvement recommendations
+- Deployed full-stack solution with secure user authentication, cloud database integration, and responsive camera interface for seamless user experience
 
 ## Technical Achievements
 
